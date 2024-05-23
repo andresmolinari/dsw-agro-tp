@@ -1,0 +1,2 @@
+### obtener todos los clientes
+GET http://localhost:3000/api/clientes
