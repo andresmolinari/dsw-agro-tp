@@ -1,2 +1,2 @@
 # tp-dsw-agro
-TP Desarrollo de Software - Agro as
+TP Desarrollo de Software - Agro
