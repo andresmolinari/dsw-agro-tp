@@ -1,2 +1,49 @@
 ### obtener todos los clientes
 GET http://localhost:3000/api/clientes
+
+
+### obtener un cliente
+GET http://localhost:3000/api/clientes/1
+
+
+### crear nuevo cliente
+POST http://localhost:3000/api/clientes
+Content-Type: application/json
+
+{
+ "nroCliente": "2",
+ "nombre": "juan",
+ "mail": "juan@hotmail.com",
+ "telefono": "3382556677",
+ "direccion": "alamos 459",
+ "localidad": "cañada seca",
+ "provincia": "buenos aires"
+}
+
+### modificar un cliente (completo)
+PUT http://localhost:3000/api/clientes/2
+Content-Type: application/json
+
+{
+  "nroCliente": "2",
+  "nombre": "jose",
+  "mail": "jose@hotmail.com",
+  "telefono": "3382556677",
+  "direccion": "guemes",
+  "localidad": "vera",
+  "provincia": "santa fe"
+}
+
+### modificar un cliente (parcial)
+PATCH http://localhost:3000/api/clientes/2
+Content-Type: application/json
+
+{
+  "nombre": "franco moreal",
+  "mail": "francomoreal@hotmail.com",
+  "direccion": "guemes 36" 
+}
+
+### borrar un cliente
+DELETE http://localhost:3000/api/clientes/2
+Content-Type: application/json
