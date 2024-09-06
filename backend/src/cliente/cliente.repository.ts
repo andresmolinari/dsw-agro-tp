@@ -11,9 +11,9 @@ const getClientes = async (): Promise<Cliente[]> => {
 };
 
 //obtener un cliente
-const getCliente = async (id: number): Promise<Cliente | null> => {
+const getCliente = async (clienteId: number): Promise<Cliente | null> => {
   try {
-    const cliente = await Cliente.findByPk(id);
+    const cliente = await Cliente.findByPk(clienteId);
     return cliente;
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
@@ -22,10 +22,10 @@ const getCliente = async (id: number): Promise<Cliente | null> => {
 };
 
 // obtener cliente por nombre
-const getClienteByName = async (nombre: string): Promise<Cliente | null> => {
+const getClienteByName = async (clienteNombre: string): Promise<Cliente | null> => {
   try {
     const cliente = await Cliente.findOne({
-      where: { nombre },
+      where: { clienteNombre },
     });
     return cliente;
   } catch (error) {
@@ -33,31 +33,25 @@ const getClienteByName = async (nombre: string): Promise<Cliente | null> => {
     throw error;
   }
 };
-// public findOne(item: { nroCliente: string }): Cliente | undefined {
-//   return clientes.find((cliente) => cliente.nroCliente === item.nroCliente);
-// }
 
-// //crear un cliente
-// public add(item: Cliente): Cliente | undefined {
-//   clientes.push(item);
-//   return item;
-// }
+// Crear un cliente
+
 const createCliente = async (
-  nombre: string,
-  email: string,
-  telefono: string,
-  direccion: string,
-  localidad: string,
-  provincia: string
+  clienteNombre: string,
+  clienteEmail: string,
+  clienteTelefono: string,
+  clienteDireccion: string,
+  clienteLocalidad: string,
+  clienteProvincia: string
 ): Promise<Cliente> => {
   try {
     return await Cliente.create({
-      nombre,
-      email,
-      telefono,
-      direccion,
-      localidad,
-      provincia,
+      clienteNombre,
+      clienteEmail,
+      clienteTelefono,
+      clienteDireccion,
+      clienteLocalidad,
+      clienteProvincia,
     });
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
@@ -65,63 +59,44 @@ const createCliente = async (
   }
 };
 
-// modificar un cliente
-// public update(item: Cliente): Cliente | undefined {
-//   const clienteNrox = clientes.findIndex(
-//     (cliente) => cliente.nroCliente === item.nroCliente
-//   );
-
-//   if (clienteNrox !== -1) {
-//     clientes[clienteNrox] = { ...clientes[clienteNrox], ...item };
-//   }
-//   return clientes[clienteNrox];
-// }
-const updateCliente = async (id: number, clienteData: Partial<ClienteAttributes>) => {
+// Modificar cliente
+const updateCliente = async (
+  clienteId: number,
+  clienteData: Partial<ClienteAttributes>
+) => {
   try {
     // Verificamos si el cliente existe
-    const cliente = await Cliente.findByPk(id);
-    
+    const cliente = await Cliente.findByPk(clienteId);
+
     if (!cliente) {
-      throw new Error('Cliente no encontrado');
+      throw new Error("Cliente no encontrado");
     }
 
     // Actualizamos el cliente con los datos recibidos
     await cliente.update(clienteData);
     return cliente;
   } catch (error) {
-    console.error('Error actualizando cliente:', error);
+    console.error("Error actualizando cliente:", error);
     throw error;
   }
 };
 
-const deleteCliente = async (id: number): Promise<boolean> => {
+// Eliminar cliente
+const deleteCliente = async (clienteId: number): Promise<boolean> => {
   try {
-    const cliente = await Cliente.findByPk(id);
-    
+    const cliente = await Cliente.findByPk(clienteId);
+
     if (!cliente) {
-      throw new Error('Cliente no encontrado');
+      throw new Error("Cliente no encontrado");
     }
 
-    await cliente.destroy();  // Eliminamos el cliente
+    await cliente.destroy(); // Eliminamos el cliente
     return true;
   } catch (error) {
-    console.error('Error eliminando cliente:', error);
+    console.error("Error eliminando cliente:", error);
     throw error;
   }
 };
-
-// // eliminar un cliente
-// public delete(item: { nroCliente: string }): Cliente | undefined {
-//   const clienteNrox = clientes.findIndex(
-//     (cliente) => cliente.nroCliente === item.nroCliente
-//   );
-
-//   if (clienteNrox !== -1) {
-//     const deletedCliente = clientes[clienteNrox];
-//     clientes.splice(clienteNrox, 1);
-//     return deletedCliente;
-//   }
-// }
 
 const clienteRepository = {
   getClientes,
@@ -129,7 +104,7 @@ const clienteRepository = {
   getClienteByName,
   createCliente,
   updateCliente,
-  deleteCliente
+  deleteCliente,
 };
 
 export default clienteRepository;

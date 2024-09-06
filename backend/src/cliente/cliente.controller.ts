@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import clienteRepository from "./cliente.repository";
 
-
 // sanitizacion middleware
 // function sanitizeClienteInput(req: Request, res: Response, next: NextFunction) {
 //   req.body.sanitizedCliente = {
@@ -37,7 +36,7 @@ const getClientes = async (req: Request, res: Response): Promise<void> => {
 // // obtener un cliente
 const getCliente = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.clienteId, 10);
 
     const cliente = await clienteRepository.getCliente(id);
 
@@ -47,116 +46,90 @@ const getCliente = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Error al obtener un cliente" });
   }
 };
-// function findOne(req: Request, res: Response) {
-//   const nroCliente = req.params.nroCliente;
-//   const cliente = repository.findOne({ nroCliente });
-//   if (!cliente) {
-//     return res.status(404).send({ message: "cliente not found" });
-//   }
-//   res.json({ data: cliente });
-// }
 
 const createCliente = async (req: Request, res: Response): Promise<void> => {
-  const {nombre, email, telefono, direccion, localidad, provincia} = req.body;
-  
-  const clienteNombre = await clienteRepository.getClienteByName(nombre);
+  const { clienteNombre, clienteEmail, clienteTelefono, clienteDireccion, clienteLocalidad, clienteProvincia } = req.body;
 
-  if(clienteNombre && clienteNombre.nombre === nombre) {
-    res.status(400).json({ message: "Ya existe un cliente con ese nombre" });
-    return;
-  }
-  
-  if (!nombre) {
+  if (!clienteNombre) {
     res.status(400).json({ message: "El nombre es requerido" });
     return;
   }
+
+  const existeNombre = await clienteRepository.getClienteByName(clienteNombre);
+
+  if (existeNombre && existeNombre.clienteNombre === clienteNombre) {
+    res.status(400).json({ message: "Ya existe un cliente con ese nombre" });
+    return;
+  }
+
   try {
-    const newCliente = await clienteRepository.createCliente(nombre, email, telefono, direccion, localidad, provincia);
+    const newCliente = await clienteRepository.createCliente(
+      clienteNombre,
+      clienteEmail,
+      clienteTelefono,
+      clienteDireccion,
+      clienteLocalidad,
+      clienteProvincia
+    );
     res.status(201).json(newCliente);
   } catch (error) {
     console.error(error); // Log para entender el error
     res.status(500).json({ message: "Error al crear cliente" });
   }
 };
-// // crear cliente
-// function add(req: Request, res: Response) {
-//   const input = req.body.sanitizedCliente;
 
-//   const clienteInput = new Cliente(
-//     input.nroCliente,
-//     input.nombre,
-//     input.mail,
-//     input.telefono,
-//     input.direccion,
-//     input.localidad,
-//     input.provincia
-//   );
-
-//   const cliente = repository.add(clienteInput);
-//   return res.status(201).send({ message: "cliente creado", data: cliente });
-// }
+// modificar cliente
 const updateCliente = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
-  const { nombre, email, telefono, direccion, localidad, provincia } = req.body;
+  const { clienteId } = req.params;
+  const { clienteNombre, clienteEmail, clienteTelefono, clienteDireccion, clienteLocalidad, clienteProvincia } = req.body;
 
   try {
     // Obtenemos el cliente actual por su ID
-    const clienteActual = await clienteRepository.getCliente(parseInt(id));
-    
+    const clienteActual = await clienteRepository.getCliente(parseInt(clienteId));
+
     if (!clienteActual) {
       res.status(404).json({ message: "Cliente no encontrado" });
       return;
     }
 
     // Si el nombre ha cambiado, validamos que no exista otro cliente con el mismo nombre
-    if (nombre && nombre !== clienteActual.nombre) {
-      const clienteNombre = await clienteRepository.getClienteByName(nombre);
-      
-      if (clienteNombre) {
-        res.status(400).json({ message: "Ya existe un cliente con ese nombre" });
+    if (clienteActual && clienteNombre !== clienteActual.clienteNombre) {
+      const existeNombre = await clienteRepository.getClienteByName(clienteNombre);
+
+      if (existeNombre) {
+        res
+          .status(400)
+          .json({ message: "Ya existe un cliente con ese nombre" });
         return;
       }
     }
 
     // Realizamos la actualización solo con los campos que se enviaron
-    const updatedCliente = await clienteRepository.updateCliente(parseInt(id), {
-      nombre: nombre || clienteActual.nombre,  // Si no se envía un nuevo nombre, mantenemos el nombre actual
-      email,
-      telefono,
-      direccion,
-      localidad,
-      provincia
+    const updatedCliente = await clienteRepository.updateCliente(parseInt(clienteId), {
+      clienteNombre: clienteNombre || clienteActual.clienteNombre, // Si no se envía un nuevo nombre, mantenemos el nombre actual
+      clienteEmail,
+      clienteTelefono,
+      clienteDireccion,
+      clienteLocalidad,
+      clienteProvincia,
     });
 
     // Retornar la respuesta exitosa
     res.status(200).json(updatedCliente);
   } catch (error) {
-    console.error('Error al actualizar cliente:', error);
-    res.status(500).json({ message: 'Error al actualizar cliente' });
+    console.error("Error al actualizar cliente:", error);
+    res.status(500).json({ message: "Error al actualizar cliente" });
   }
 };
 
-// // modificar cliente completo
-// function update(req: Request, res: Response) {
-//   req.body.sanitizedCliente.nroCliente = req.params.nroCliente;
-//   const cliente = repository.update(req.body.sanitizedCliente); //le pasamos el sanitizado
-
-//   if (!cliente) {
-//     return res.status(404).send({ message: "Cliente not found" });
-//   }
-
-//   return res
-//     .status(200)
-//     .send({ message: "cliente modificado correctamente", data: cliente });
-// }
-
-
 // borrar un cliente
 const deleteCliente = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
+  const { clienteId } = req.params;
 
   try {
-    const clienteEliminado = await clienteRepository.deleteCliente(parseInt(id));
+    const clienteEliminado = await clienteRepository.deleteCliente(
+      parseInt(clienteId)
+    );
 
     if (clienteEliminado) {
       res.status(200).json({ message: "Cliente eliminado correctamente" });
@@ -164,20 +137,10 @@ const deleteCliente = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Cliente no encontrado" });
     }
   } catch (error) {
-    console.error('Error al eliminar cliente:', error);
-    res.status(500).json({ message: 'Error al eliminar cliente' });
+    console.error("Error al eliminar cliente:", error);
+    res.status(500).json({ message: "Error al eliminar cliente" });
   }
 };
-// function remove(req: Request, res: Response) {
-//   const nroCliente = req.params.nroCliente;
-//   const cliente = repository.delete({ nroCliente });
-
-//   if (!cliente) {
-//     res.status(404).send({ message: "Cliente not found" });
-//   } else {
-//     res.status(200).send({ message: "cliente deleted successfully" });
-//   }
-// }
 
 export const controller = {
   // sanitizeClienteInput,
@@ -185,5 +148,5 @@ export const controller = {
   getCliente,
   createCliente,
   updateCliente,
-  deleteCliente
+  deleteCliente,
 };

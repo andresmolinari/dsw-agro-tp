@@ -2,52 +2,52 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../db/connection";
 
 export interface ClienteAttributes {
-  id?: number;
-  nombre: string;
-  email?: string;
-  telefono?: string;
-  direccion?: string;
-  localidad?: string;
-  provincia?: string;
+  clienteId?: number;
+  clienteNombre: string;
+  clienteEmail?: string;
+  clienteTelefono?: string;
+  clienteDireccion?: string;
+  clienteLocalidad?: string;
+  clienteProvincia?: string;
 }
 
 export class Cliente extends Model<ClienteAttributes> implements ClienteAttributes {
-  public id?: number;
-  public nombre!: string;
-  public email: string | undefined;
-  public telefono: string | undefined;
-  public direccion: string | undefined;
-  public localidad: string | undefined;
-  public provincia: string | undefined;
+  public clienteId?: number;
+  public clienteNombre!: string;
+  public clienteEmail: string | undefined;
+  public clienteTelefono: string | undefined;
+  public clienteDireccion: string | undefined;
+  public clienteLocalidad: string | undefined;
+  public clienteProvincia: string | undefined;
 }
 
 Cliente.init({
-  id: {
+  clienteId: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  nombre: {
+  clienteNombre: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  telefono: {
+  clienteEmail: {
     type: DataTypes.STRING,
   },
-  direccion: {
+  clienteTelefono: {
     type: DataTypes.STRING,
   },
-  localidad: {
+  clienteDireccion: {
     type: DataTypes.STRING,
   },
-  provincia: {
+  clienteLocalidad: {
+    type: DataTypes.STRING,
+  },
+  clienteProvincia: {
     type: DataTypes.STRING,
   },
 }, {
   sequelize,
   modelName: 'Cliente',
+  tableName: 'Clientes', // Asegúrate de que el nombre de la tabla sea 'Clientes'
 });
