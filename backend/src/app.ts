@@ -1,17 +1,7 @@
-import express from 'express'
-import { clienteRouter } from './cliente/cliente.routes.js'
+import Server from "./models/server";
+import dotenv from 'dotenv';
 
-const app = express()
-app.use(express.json()) //middleware
+// Configuramos dotenv
+dotenv.config();
 
-app.use('/api/clientes', clienteRouter)
-
-// middleware para error de url desconocida
-app.use((_, res) => {
-  return res.status(404).send({ message: 'Resource not found' })
-})
-
-app.listen(3000, () => {
-  console.log('server running on http://localhost:3000/')
-})
-
+const server = new Server();
