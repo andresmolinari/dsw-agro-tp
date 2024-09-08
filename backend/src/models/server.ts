@@ -4,6 +4,10 @@ import { defineAssociations } from "./associations";
 import clienteRouter from "../routes/cliente.routes";
 import sequelize from "../db/connection";
 import campoRouter from "../routes/campo.routes";
+import usuarioRouter from "../routes/usuario.routes";
+import { Cliente } from "./cliente";
+import { Campo } from "./campo";
+import { Usuario } from "./usuario";
 
 class Server {
   private app: Application;
@@ -28,6 +32,7 @@ class Server {
   routes() {
     this.app.use("/api/clientes", clienteRouter);
     this.app.use("/api/campos", campoRouter);
+    this.app.use("/api/usuarios", usuarioRouter);
   }
 
   // Middlewares
@@ -54,11 +59,13 @@ class Server {
   // Conexión con la base de datos
   async dbConnect() {
     try {
-      // Definir las asociaciones antes de sincronizar
-      //defineAssociations();
+     
+    
+  
+      defineAssociations();
 
       //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
-      await sequelize.sync({ alter: true }); // cheque si hay cambios y los hace
+      await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
       console.log("Tablas sincronizadas");
     } catch (error) {
       // Capturar cualquier error durante la sincronización o conexión

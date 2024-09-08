@@ -1,9 +1,11 @@
 import { Campo, CampoAttributes } from "../models/campo";
 
 //obtener todos los campos
-const getCampos = async (): Promise<Campo[]> => {
+const getCampos = async (clienteId: number): Promise<Campo[]> => {
   try {
-    return await Campo.findAll();
+    return await Campo.findAll({
+      where: { clienteId },
+    });
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
     throw error;
@@ -11,9 +13,14 @@ const getCampos = async (): Promise<Campo[]> => {
 };
 
 //obtener un campo
-const getCampo = async (id: number): Promise<Campo | null> => {
+const getCampo = async (
+  campoId: number,
+  clienteId: number
+): Promise<Campo | null> => {
   try {
-    const campo = await Campo.findByPk(id);
+    const campo = await Campo.findOne({
+      where: { campoId: campoId, clienteId: clienteId },
+    });
     return campo;
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
@@ -22,10 +29,13 @@ const getCampo = async (id: number): Promise<Campo | null> => {
 };
 
 // obtener campo por nombre
-const getCampoByName = async (campoNombre: string): Promise<Campo | null> => {
+const getCampoByName = async (
+  campoNombre: string,
+  clienteId: number
+): Promise<Campo | null> => {
   try {
     const campo = await Campo.findOne({
-      where: { campoNombre },
+      where: { campoNombre, clienteId: clienteId },
     });
     return campo;
   } catch (error) {
@@ -46,7 +56,10 @@ const createCampo = async (campoData: CampoAttributes): Promise<Campo> => {
 };
 
 // Modificar campo
-const updateCampo = async (campoId: number, campoData: Partial<CampoAttributes>) => {
+const updateCampo = async (
+  campoId: number,
+  campoData: Partial<CampoAttributes>
+) => {
   try {
     // Verificamos si el campo existe
     const campo = await Campo.findByPk(campoId);

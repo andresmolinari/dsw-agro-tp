@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import campoRepository from "./campo.repository";
+import { parse } from "path";
 
 // obtener todos los campos
 const getCampos = async (req: Request, res: Response): Promise<void> => {
   try {
-    const campos = await campoRepository.getCampos();
+    const clienteId = parseInt(req.params.clienteId, 10);
+    const campos = await campoRepository.getCampos(clienteId);
     res.status(200).json(campos);
   } catch (error) {
     console.error(error); // Log para entender el error
@@ -15,9 +17,10 @@ const getCampos = async (req: Request, res: Response): Promise<void> => {
 // // obtener un campo
 const getCampo = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = parseInt(req.params.campoId, 10);
+    const campoId = parseInt(req.params.campoId, 10);
+    const clienteId = parseInt(req.params.campoId, 10);
 
-    const campo = await campoRepository.getCampo(id);
+    const campo = await campoRepository.getCampo(campoId, clienteId);
 
     res.status(200).json(campo);
   } catch (error) {
@@ -28,15 +31,15 @@ const getCampo = async (req: Request, res: Response): Promise<void> => {
 
 const createCampo = async (req: Request, res: Response): Promise<void> => {
   try {
-
-    const { clienteId, campoNombre, campoUbicacion } = req.body;
+    const clienteId = parseInt(req.params.clienteId, 10);
+    const {  campoNombre, campoUbicacion } = req.body;
 
     if (!clienteId || !campoNombre) {
       res.status(400).json({ message: "El nombre es requerido" });
       return;
     }
   
-    const existeNombre = await campoRepository.getCampoByName(campoNombre);
+    const existeNombre = await campoRepository.getCampoByName(campoNombre, clienteId);
   
     if (existeNombre && existeNombre.campoNombre === campoNombre) {
       res.status(400).json({ message: "Ya existe un campo con ese nombre" });
@@ -55,12 +58,13 @@ const createCampo = async (req: Request, res: Response): Promise<void> => {
 
 // modificar campo
 const updatecampo = async (req: Request, res: Response): Promise<void> => {
-  const { campoId } = req.params;
-  const {clienteId, campoNombre, campoUbicacion } = req.body;
+  const clienteId = parseInt(req.params.clienteId, 10);
+  const  campoId  = parseInt(req.params.campoId, 10);
+  const {campoNombre, campoUbicacion } = req.body;
 
   try {
     // Obtenemos el campo actual por su ID
-    const campoActual = await campoRepository.getCampo(parseInt(campoId));
+    const campoActual = await campoRepository.getCampo(campoId, clienteId);
 
     if (!campoActual) {
       res.status(404).json({ message: "campo no encontrado" });
@@ -68,8 +72,8 @@ const updatecampo = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Realizamos la actualización solo con los campos que se enviaron
-    const updatedcampo = await campoRepository.updateCampo(parseInt(campoId), {
-      clienteId: clienteId,
+    const updatedcampo = await campoRepository.updateCampo(campoId, {
+      
       campoNombre: campoNombre,
       campoUbicacion: campoUbicacion
     });

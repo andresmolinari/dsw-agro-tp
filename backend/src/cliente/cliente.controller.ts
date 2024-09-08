@@ -25,7 +25,8 @@ import clienteRepository from "./cliente.repository";
 // obtener todos los clientes
 const getClientes = async (req: Request, res: Response): Promise<void> => {
   try {
-    const clientes = await clienteRepository.getClientes();
+    const  usuarioId  = parseInt(req.params.usuarioId, 10);
+    const clientes = await clienteRepository.getClientes(usuarioId);
     res.status(200).json(clientes);
   } catch (error) {
     console.error(error); // Log para entender el error
@@ -36,9 +37,10 @@ const getClientes = async (req: Request, res: Response): Promise<void> => {
 // // obtener un cliente
 const getCliente = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = parseInt(req.params.clienteId, 10);
+    const  usuarioId  = parseInt(req.params.usuarioId, 10);
+    const clienteId = parseInt(req.params.clienteId, 10);
 
-    const cliente = await clienteRepository.getCliente(id);
+    const cliente = await clienteRepository.getCliente(clienteId, usuarioId);
 
     res.status(200).json(cliente);
   } catch (error) {
@@ -47,7 +49,9 @@ const getCliente = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// Crear cliente
 const createCliente = async (req: Request, res: Response): Promise<void> => {
+  const  usuarioId  = parseInt(req.params.usuarioId, 10);
   const { clienteNombre, clienteEmail, clienteTelefono, clienteDireccion, clienteLocalidad, clienteProvincia } = req.body;
 
   if (!clienteNombre) {
@@ -55,7 +59,7 @@ const createCliente = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const existeNombre = await clienteRepository.getClienteByName(clienteNombre);
+  const existeNombre = await clienteRepository.getClienteByName(clienteNombre, usuarioId);
 
   if (existeNombre && existeNombre.clienteNombre === clienteNombre) {
     res.status(400).json({ message: "Ya existe un cliente con ese nombre" });
@@ -64,6 +68,7 @@ const createCliente = async (req: Request, res: Response): Promise<void> => {
 
   try {
     const newCliente = await clienteRepository.createCliente(
+      usuarioId,
       clienteNombre,
       clienteEmail,
       clienteTelefono,
@@ -80,12 +85,13 @@ const createCliente = async (req: Request, res: Response): Promise<void> => {
 
 // modificar cliente
 const updateCliente = async (req: Request, res: Response): Promise<void> => {
-  const { clienteId } = req.params;
-  const { clienteNombre, clienteEmail, clienteTelefono, clienteDireccion, clienteLocalidad, clienteProvincia } = req.body;
+  const  clienteId  = parseInt(req.params.clienteId, 10);
+  const  usuarioId  = parseInt(req.params.usuarioId, 10);
+  const {  clienteNombre, clienteEmail, clienteTelefono, clienteDireccion, clienteLocalidad, clienteProvincia } = req.body;
 
   try {
     // Obtenemos el cliente actual por su ID
-    const clienteActual = await clienteRepository.getCliente(parseInt(clienteId));
+    const clienteActual = await clienteRepository.getCliente(clienteId, usuarioId);
 
     if (!clienteActual) {
       res.status(404).json({ message: "Cliente no encontrado" });
@@ -94,7 +100,7 @@ const updateCliente = async (req: Request, res: Response): Promise<void> => {
 
     // Si el nombre ha cambiado, validamos que no exista otro cliente con el mismo nombre
     if (clienteActual && clienteNombre !== clienteActual.clienteNombre) {
-      const existeNombre = await clienteRepository.getClienteByName(clienteNombre);
+      const existeNombre = await clienteRepository.getClienteByName(clienteNombre, usuarioId);
 
       if (existeNombre) {
         res
@@ -105,7 +111,7 @@ const updateCliente = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Realizamos la actualización solo con los campos que se enviaron
-    const updatedCliente = await clienteRepository.updateCliente(parseInt(clienteId), {
+    const updatedCliente = await clienteRepository.updateCliente(clienteId, {
       clienteNombre: clienteNombre || clienteActual.clienteNombre, // Si no se envía un nuevo nombre, mantenemos el nombre actual
       clienteEmail,
       clienteTelefono,

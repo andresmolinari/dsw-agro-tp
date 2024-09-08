@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { controller } from "../cliente/cliente.controller.js";
+import validateToken from "./validate-token.js";
 
 const clienteRouter = Router();
 
-clienteRouter.get("/", controller.getClientes);
-clienteRouter.get("/:clienteId", controller.getCliente);
-clienteRouter.post("/", controller.createCliente);
-clienteRouter.put('/:clienteId',controller.updateCliente);
-clienteRouter.delete('/:clienteId', controller.deleteCliente);
+clienteRouter.get("/:usuarioId", validateToken, controller.getClientes);
+clienteRouter.get("/:usuarioId/:clienteId", validateToken, controller.getCliente);
+clienteRouter.post("/:usuarioId", validateToken, controller.createCliente);
+clienteRouter.put("/:usuarioId/:clienteId", validateToken, controller.updateCliente);
+clienteRouter.delete("/:clienteId", validateToken, controller.deleteCliente);
 
 export default clienteRouter;

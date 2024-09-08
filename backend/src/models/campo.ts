@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 import sequelize from "../db/connection";
 import { Cliente } from "./cliente";
 
@@ -14,8 +14,8 @@ export class Campo extends Model<CampoAttributes> implements CampoAttributes {
   public clienteId!: number;
   public campoNombre!: string;
   public campoUbicacion: string | undefined;
-}
 
+static initModel(sequelize: Sequelize) {
 Campo.init(
   {
     campoId: {
@@ -30,6 +30,8 @@ Campo.init(
         model: "Clientes", // Debe coincidir con el nombre de la tabla en la base de datos
         key: "clienteId",
       },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     campoNombre: {
       type: DataTypes.STRING,
@@ -42,11 +44,15 @@ Campo.init(
   {
     sequelize,
     modelName: "Campo",
-    tableName: 'Campos', // Asegúrate de que el nombre de la tabla sea 'Campos'
+    tableName: 'Campos',
   }
 );
+}
+}
 
-Campo.belongsTo(Cliente, {
-  foreignKey: 'clienteId',
-  targetKey: 'clienteId',
-});
+Campo.initModel(sequelize);
+
+// Campo.belongsTo(Cliente, {
+//   foreignKey: 'clienteId',
+//   targetKey: 'clienteId',
+// });

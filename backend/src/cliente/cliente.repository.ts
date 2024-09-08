@@ -1,19 +1,38 @@
+import { Campo } from "../models/campo";
 import { Cliente, ClienteAttributes } from "../models/cliente";
 
 //obtener todos los clientes
-const getClientes = async (): Promise<Cliente[]> => {
+const getClientes = async (usuarioId: number): Promise<Cliente[]> => {
   try {
-    return await Cliente.findAll();
+    return await Cliente.findAll({
+      where: {usuarioId}, 
+      include: [
+        {
+          model: Campo,
+          attributes: [
+            "campoId",
+            "campoNombre",
+            "campoUbicacion",
+          ],
+          as: "campos",
+        },
+      ],
+    });
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
     throw error;
   }
 };
 
-//obtener un cliente
-const getCliente = async (clienteId: number): Promise<Cliente | null> => {
+// obtener un cliente
+const getCliente = async (clienteId: number, usuarioId: number): Promise<Cliente | null> => {
   try {
-    const cliente = await Cliente.findByPk(clienteId);
+    const cliente = await Cliente.findOne({
+      where: {
+        clienteId: clienteId,
+        usuarioId: usuarioId,
+      },
+    });
     return cliente;
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
@@ -22,10 +41,13 @@ const getCliente = async (clienteId: number): Promise<Cliente | null> => {
 };
 
 // obtener cliente por nombre
-const getClienteByName = async (clienteNombre: string): Promise<Cliente | null> => {
+const getClienteByName = async (clienteNombre: string, usuarioId: number): Promise<Cliente | null> => {
   try {
     const cliente = await Cliente.findOne({
-      where: { clienteNombre },
+      where: {
+        clienteNombre,
+        usuarioId: usuarioId,
+      },
     });
     return cliente;
   } catch (error) {
@@ -37,6 +59,7 @@ const getClienteByName = async (clienteNombre: string): Promise<Cliente | null> 
 // Crear un cliente
 
 const createCliente = async (
+  usuarioId: number,
   clienteNombre: string,
   clienteEmail: string,
   clienteTelefono: string,
@@ -46,6 +69,7 @@ const createCliente = async (
 ): Promise<Cliente> => {
   try {
     return await Cliente.create({
+      usuarioId,
       clienteNombre,
       clienteEmail,
       clienteTelefono,
