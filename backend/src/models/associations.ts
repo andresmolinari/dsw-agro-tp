@@ -4,20 +4,24 @@ import { Campo } from "./campo";
 import sequelize from "../db/connection";
 import { Sequelize } from "sequelize";
 import { Usuario } from "./usuario";
+import { Lote } from "./lote";
 
 export function defineAssociations() {
-  // Definir asociaciones
+
+  // Inicializar modelos
 
   Usuario.initModel(sequelize);
   Cliente.initModel(sequelize);
   Campo.initModel(sequelize);
+  Lote.initModel(sequelize);
+
+  // Definir asociaciones
 
   Usuario.hasMany(Cliente, {
     foreignKey: "usuarioId",
     as: "clientes",
   });
 
-  // Un cliente pertenece a un usuario
   Cliente.belongsTo(Usuario, {
     foreignKey: "usuarioId",
     as: "usuario",
@@ -30,5 +34,15 @@ export function defineAssociations() {
   Campo.belongsTo(Cliente, {
     foreignKey: "clienteId",
     as: "cliente",
+  });
+
+  Campo.hasMany(Lote, {
+    foreignKey: "campoId",
+    as: "lotes",
+  });
+
+  Lote.belongsTo(Campo, {
+    foreignKey: "campoId",
+    as: "campo",
   });
 }

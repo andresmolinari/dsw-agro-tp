@@ -5,9 +5,8 @@ import clienteRouter from "../routes/cliente.routes";
 import sequelize from "../db/connection";
 import campoRouter from "../routes/campo.routes";
 import usuarioRouter from "../routes/usuario.routes";
-import { Cliente } from "./cliente";
-import { Campo } from "./campo";
-import { Usuario } from "./usuario";
+import loteRouter from "../routes/lote.routes";
+
 
 class Server {
   private app: Application;
@@ -33,6 +32,7 @@ class Server {
     this.app.use("/api/clientes", clienteRouter);
     this.app.use("/api/campos", campoRouter);
     this.app.use("/api/usuarios", usuarioRouter);
+    this.app.use("/api/lotes", loteRouter);
   }
 
   // Middlewares
@@ -59,9 +59,6 @@ class Server {
   // Conexión con la base de datos
   async dbConnect() {
     try {
-     
-    
-  
       defineAssociations();
 
       //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear

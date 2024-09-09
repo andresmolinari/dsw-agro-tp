@@ -1,6 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import campoRepository from "./campo.repository";
-import { parse } from "path";
 
 // obtener todos los campos
 const getCampos = async (req: Request, res: Response): Promise<void> => {

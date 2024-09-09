@@ -1,6 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import sequelize from "../db/connection";
-import { Cliente } from "./cliente";
 
 export interface CampoAttributes {
   campoId?: number;
