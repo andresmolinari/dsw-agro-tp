@@ -1,8 +1,8 @@
-import { Sequelize } from "sequelize";
+import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize("dsw_agro_db", "root", "moli96", {
-  host: "localhost",
-  dialect: "mysql",
+const sequelize = new Sequelize('dsw_agro_db', 'root', '1234', {
+  host: 'localhost',
+  dialect: 'mysql',
 });
 
 export default sequelize;

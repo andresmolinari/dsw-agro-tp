@@ -1,5 +1,5 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
-import sequelize from "../db/connection";
+import { DataTypes, Model, Sequelize } from 'sequelize';
+import sequelize from '../db/connection';
 
 export interface UsuarioAttributes {
   usuarioId?: number;
@@ -40,8 +40,8 @@ export class Usuario
       },
       {
         sequelize,
-        modelName: "usuario",
-        tableName: "usuarios",
+        modelName: 'usuario',
+        tableName: 'Usuarios',
       }
     );
   }

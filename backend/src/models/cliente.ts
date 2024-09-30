@@ -1,7 +1,7 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
-import sequelize from "../db/connection";
-import { Usuario } from "./usuario";
-import { Campo } from "./campo";
+import { DataTypes, Model, Sequelize } from 'sequelize';
+import sequelize from '../db/connection';
+import { Usuario } from './usuario';
+import { Campo } from './campo';
 
 export interface ClienteAttributes {
   clienteId?: number;
@@ -39,11 +39,11 @@ export class Cliente
           type: DataTypes.INTEGER,
           allowNull: false,
           references: {
-            model: "Usuarios",
-            key: "usuarioId",
+            model: 'Usuarios',
+            key: 'usuarioId',
           },
-          onUpdate: "CASCADE",
-          onDelete: "CASCADE",
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
         },
         clienteNombre: {
           type: DataTypes.STRING,
@@ -67,8 +67,8 @@ export class Cliente
       },
       {
         sequelize,
-        modelName: "Cliente",
-        tableName: "Clientes",
+        modelName: 'Cliente',
+        tableName: 'Clientes',
       }
     );
   }
@@ -85,5 +85,3 @@ Cliente.initModel(sequelize);
 //   foreignKey: "clienteId",
 //   sourceKey: "clienteId",
 // });
-
-
