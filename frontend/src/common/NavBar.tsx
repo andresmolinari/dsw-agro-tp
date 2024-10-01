@@ -1,5 +1,5 @@
 import { Button, Grid, Typography } from '@material-ui/core';
-import { AppBar, Box, Container, Toolbar } from '@mui/material';
+import { AppBar, Box, Container, Stack, Toolbar } from '@mui/material';
 export const NavBar: React.FC = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -16,7 +16,10 @@ export const NavBar: React.FC = () => {
                 <Typography>Agro</Typography>
               </Grid>
               <Grid item>
-                <Button variant='outlined'>Login</Button>
+                <Stack direction='row' spacing={2}>
+                  <Button variant='contained'>Login</Button>
+                  <Button variant='outlined'>Register</Button>
+                </Stack>
               </Grid>
             </Grid>
           </Container>
@@ -25,3 +28,4 @@ export const NavBar: React.FC = () => {
     </Box>
   );
 };
+export default NavBar;
