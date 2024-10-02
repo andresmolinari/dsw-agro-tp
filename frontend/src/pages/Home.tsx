@@ -1,4 +1,4 @@
-import { Button, Container } from '@material-ui/core';
+import { Button, Container } from '@mui/material';
 
 interface Props {}
 

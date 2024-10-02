@@ -1,90 +1,81 @@
+import React, { useState } from 'react';
 import {
   Container,
-  Grid,
   Paper,
-  TextField,
   Typography,
-  Button,
   Box,
-} from '@material-ui/core';
-import { useState } from 'react';
-
-interface Props {
+  TextField,
+  Button,
+} from '@mui/material';
+interface LoginType {
   username: string;
   password: string;
 }
-
-const LoginPage = () => {
-  const [loginData, setLoginData] = useState<Props>({
+const Login = () => {
+  const [loginData, setLoginData] = useState<LoginType>({
     username: '',
     password: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
-      [name]: value,
-    });
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Aca se puede manejar el envío del formulario
-    console.log('Datos de inicio de sesión:', loginData);
+    console.log('Datos del usuario:', loginData); // Muestra los datos del formulario en la consola
+    // Lógica de envío de formulario
   };
 
   return (
     <Container maxWidth='sm'>
-      <Grid
-        container
-        direction='column'
+      <Box
+        display='flex'
+        flexDirection='column'
         alignItems='center'
         justifyContent='center'
-        style={{ minHeight: '100vh' }}
+        minHeight='100vh'
       >
-        <Grid item>
-          <Paper style={{ padding: '1.2em', borderRadius: '0.5em' }}>
-            <Typography variant='h4' gutterBottom>
+        <Paper style={{ padding: '1.2em', borderRadius: '0.5em' }}>
+          <Typography variant='h4' gutterBottom>
+            Iniciar Sesión
+          </Typography>
+          <Box component='form' onSubmit={handleSubmit}>
+            <TextField
+              fullWidth
+              margin='normal'
+              label='Nombre de Usuario'
+              variant='outlined'
+              required
+              name='username'
+              value={loginData.username}
+              onChange={handleChange}
+            />
+            <TextField
+              fullWidth
+              margin='normal'
+              label='Contraseña'
+              type='password'
+              variant='outlined'
+              required
+              name='password'
+              value={loginData.password}
+              onChange={handleChange}
+            />
+            <Button
+              fullWidth
+              type='submit'
+              variant='contained'
+              color='primary'
+              sx={{ marginTop: '1rem' }}
+            >
               Iniciar Sesión
-            </Typography>
-            <Box component='form' onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                margin='normal'
-                label='Nombre de Usuario'
-                variant='outlined'
-                required
-                name='username'
-                value={loginData.username}
-                onChange={handleChange}
-              />
-              <TextField
-                fullWidth
-                margin='normal'
-                label='Contraseña'
-                type='password'
-                variant='outlined'
-                required
-                name='password'
-                value={loginData.password}
-                onChange={handleChange}
-              />
-              <Button
-                fullWidth
-                type='submit'
-                variant='contained'
-                color='primary'
-                style={{ marginTop: '1rem' }}
-              >
-                Iniciar Sesión
-              </Button>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
     </Container>
   );
 };
 
-export default LoginPage;
+export default Login;
