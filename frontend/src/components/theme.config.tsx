@@ -2,16 +2,19 @@ import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { ThemeOptions } from '@mui/material/styles';
 import React from 'react';
 
-//propiedades del componente ThemeConfig
+// Propiedades de ThemeConfig
 interface Props {
   children: React.ReactNode;
 }
 
-//paleta de colores y fuentes globales
+// Paleta de colores y fuentes globales
 export enum ThemePalette {
   BG = '#12181b',
   LIME = '#a2c11c',
   FONT_GLOBAL = 'jetbrains mono, monospace',
+  // Alert Styles
+  ERROR_MAIN = '#f44336',
+  BG_ERROR_MAIN = 'rgba(244,67,54,0.1)',
 }
 
 // Opciones del tema
@@ -44,13 +47,27 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
+
+    MuiAlert: {
+      styleOverrides: {
+        standardError: {
+          border: `1px solid ${ThemePalette.ERROR_MAIN}`,
+          background: ThemePalette.BG_ERROR_MAIN,
+        },
+        // Asegúrate de usar styleOverrides aquí
+        root: {
+          borderRadius: '0.8em',
+          fontSize: '1em',
+        },
+      },
+    },
   },
 };
 
 // Creación del tema con las opciones definidas
 const theme = createTheme(themeOptions);
 
-// aplica el tema a sus hijos
+// Aplica el tema a sus hijos
 export const ThemeConfig: React.FC<Props> = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>

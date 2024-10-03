@@ -1,6 +1,14 @@
 import { Button, Grid, Typography } from '@material-ui/core';
 import { AppBar, Box, Container, Stack, Toolbar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../types/AppRoutes';
 export const NavBar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const onCLickLoginButton = () => {
+    navigate(AppRoutes.LOGIN);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='fixed'>
@@ -17,7 +25,9 @@ export const NavBar: React.FC = () => {
               </Grid>
               <Grid item>
                 <Stack direction='row' spacing={2}>
-                  <Button variant='contained'>Login</Button>
+                  <Button variant='contained' onClick={onCLickLoginButton}>
+                    Login
+                  </Button>
                   <Button variant='outlined'>Register</Button>
                 </Stack>
               </Grid>
