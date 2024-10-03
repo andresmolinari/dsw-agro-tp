@@ -29,7 +29,7 @@ const Login = () => {
     console.log('Datos del usuario:', loginData); // Muestra los datos del formulario en la consola
     localStorage.setItem('token', JSON.stringify(loginData)); // Almacena los datos en el Local Storage
     // Lógica de envío de formulario
-    NotificationService.error('Inicio de sesión exitoso');
+    NotificationService.info('Inicio de sesión exitoso');
   };
 
   return (

@@ -8,6 +8,9 @@ export const NavBar: React.FC = () => {
   const onCLickLoginButton = () => {
     navigate(AppRoutes.LOGIN);
   };
+  const onCLickRegisterButton = () => {
+    navigate(AppRoutes.REGISTER);
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -28,7 +31,9 @@ export const NavBar: React.FC = () => {
                   <Button variant='contained' onClick={onCLickLoginButton}>
                     Login
                   </Button>
-                  <Button variant='outlined'>Register</Button>
+                  <Button variant='outlined' onClick={onCLickRegisterButton}>
+                    Register
+                  </Button>
                 </Stack>
               </Grid>
             </Grid>
