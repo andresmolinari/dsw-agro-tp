@@ -1,6 +1,5 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { ThemeOptions } from '@mui/material/styles';
-import React from 'react';
 
 // Propiedades de ThemeConfig
 interface Props {
