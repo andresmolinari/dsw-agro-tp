@@ -49,6 +49,7 @@ const Register = (props: Props) => {
           </Typography>
           <Box component='form' onSubmit={handleSubmit}>
             <TextField
+              autoFocus
               fullWidth
               margin='normal'
               label='Nombre de Usuario'

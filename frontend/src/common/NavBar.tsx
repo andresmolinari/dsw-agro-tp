@@ -1,14 +1,22 @@
+import React, { useContext } from 'react';
 import { Button, Grid, Typography } from '@material-ui/core';
 import { AppBar, Box, Container, Stack, Toolbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AppRoutes } from '../types/AppRoutes';
+import { AuthContext } from '../context/AuthContext';
+
 export const NavBar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const authContext = useContext(AuthContext);
 
-  const onCLickLoginButton = () => {
+  const isAuthenticated = authContext?.isAuthenticated || false; // Si es undefined, false por defecto
+
+  const onClickLoginButton = () => {
     navigate(AppRoutes.LOGIN);
   };
-  const onCLickRegisterButton = () => {
+
+  const onClickRegisterButton = () => {
     navigate(AppRoutes.REGISTER);
   };
 
@@ -28,12 +36,24 @@ export const NavBar: React.FC = () => {
               </Grid>
               <Grid item>
                 <Stack direction='row' spacing={2}>
-                  <Button variant='contained' onClick={onCLickLoginButton}>
-                    Login
-                  </Button>
-                  <Button variant='outlined' onClick={onCLickRegisterButton}>
-                    Register
-                  </Button>
+                  {isAuthenticated && location.pathname === '/home' ? (
+                    <>
+                      <Button variant='contained'>Option 1</Button>
+                      <Button variant='outlined'>Option 2</Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant='contained' onClick={onClickLoginButton}>
+                        Login
+                      </Button>
+                      <Button
+                        variant='outlined'
+                        onClick={onClickRegisterButton}
+                      >
+                        Register
+                      </Button>
+                    </>
+                  )}
                 </Stack>
               </Grid>
             </Grid>
@@ -43,4 +63,5 @@ export const NavBar: React.FC = () => {
     </Box>
   );
 };
+
 export default NavBar;
