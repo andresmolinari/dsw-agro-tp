@@ -19,10 +19,6 @@ interface LoginType {
   password: string;
 }
 
-interface LoginResponse {
-  token: string;
-}
-
 const Login = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginType>({
@@ -42,9 +38,10 @@ const Login = () => {
         loginData.name,
         loginData.password
       );
-      const data: LoginResponse = response.data;
+      const data: string = response.data;
+      console.log(data);
       if (response.status === 200) {
-        localStorage.setItem('token', data.token || '');
+        localStorage.setItem('token', data);
         NotificationService.info('Inicio de sesión exitoso');
         navigate(AppRoutes.HOME);
       } else {

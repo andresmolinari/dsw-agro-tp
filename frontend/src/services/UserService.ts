@@ -1,9 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
 
-interface LoginResponse {
-  token: string;
-}
-
 class UserService {
   path: string;
 
@@ -11,15 +7,12 @@ class UserService {
     this.path = path;
   }
 
-  login(name: string, password: string): Promise<AxiosResponse<LoginResponse>> {
+  login(name: string, password: string): Promise<AxiosResponse<string>> {
     console.log('username:', name);
-    return axios.post<LoginResponse>(
-      `http://localhost:3000${this.path}/login`,
-      {
-        name,
-        password,
-      }
-    );
+    return axios.post<string>(`http://localhost:3000${this.path}/login`, {
+      name,
+      password,
+    });
   }
 }
 
