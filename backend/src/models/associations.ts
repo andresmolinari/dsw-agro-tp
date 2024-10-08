@@ -5,9 +5,12 @@ import sequelize from "../db/connection";
 import { Sequelize } from "sequelize";
 import { Usuario } from "./usuario";
 import { Lote } from "./lote";
+import { OrdenTrabajo } from "./ordenTrabajo";
+import { Cosecha } from "./cosecha";
+import { Fumigacion } from "./fumigacion";
+import { Siembra } from "./siembra";
 
 export function defineAssociations() {
-
   // Inicializar modelos
 
   Usuario.initModel(sequelize);
@@ -44,5 +47,26 @@ export function defineAssociations() {
   Lote.belongsTo(Campo, {
     foreignKey: "campoId",
     as: "campo",
+  });
+
+  // Relación entre OrdenTrabajo y Cosecha
+  OrdenTrabajo.hasOne(Cosecha, { foreignKey: "OrdenTrabajoId" });
+  Cosecha.belongsTo(OrdenTrabajo, { foreignKey: "OrdenTrabajoId" });
+
+  // Relación entre OrdenTrabajo y Siembra
+  OrdenTrabajo.hasOne(Siembra, { foreignKey: "OrdenTrabajoId" });
+  Siembra.belongsTo(OrdenTrabajo, { foreignKey: "OrdenTrabajoId" });
+
+  // Relación entre OrdenTrabajo y Fumigacion
+  OrdenTrabajo.hasOne(Fumigacion, { foreignKey: "OrdenTrabajoId" });
+  Fumigacion.belongsTo(OrdenTrabajo, { foreignKey: "OrdenTrabajoId" });
+
+  Usuario.hasMany(OrdenTrabajo, {
+    foreignKey: "usuarioId",
+    as: "ordenestrabajo",
+  });
+  OrdenTrabajo.belongsTo(Usuario, {
+    foreignKey: "usuarioId",
+    as: "usuario",
   });
 }

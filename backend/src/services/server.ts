@@ -6,6 +6,7 @@ import sequelize from '../db/connection';
 import campoRouter from '../routes/campo.routes';
 import usuarioRouter from '../routes/usuario.routes';
 import loteRouter from '../routes/lote.routes';
+import ordenTrabajoRouter from '../routes/ordenTrabajo.routes';
 
 class Server {
   private app: Application;
@@ -32,6 +33,7 @@ class Server {
     this.app.use('/api/campos', campoRouter);
     this.app.use('/api/usuarios', usuarioRouter);
     this.app.use('/api/lotes', loteRouter);
+    this.app.use('/api/ordenTrabajo', ordenTrabajoRouter);
   }
 
   // Middlewares
@@ -62,7 +64,7 @@ class Server {
       await sequelize.sync();
       //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
       //await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
-      console.log('Tablas sincronizadas');
+      // console.log('Tablas sincronizadas');
     } catch (error) {
       // Capturar cualquier error durante la sincronización o conexión
       console.error('Error al conectar o sincronizar la base de datos:', error);
