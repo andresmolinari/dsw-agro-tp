@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { controller } from "../usuario/usuario.controller.js";
+import { controller } from "../controllers/usuario.controller.js";
 import validateToken from "./validate-token.js";
 
 const usuarioRouter = Router();

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import clienteRepository from "./cliente.repository";
+import clienteRepository from "../repositories/cliente.repository";
 
 // sanitizacion middleware
 // function sanitizeClienteInput(req: Request, res: Response, next: NextFunction) {

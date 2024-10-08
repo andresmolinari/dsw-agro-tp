@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import loteRepository from "./lote.repository";
+import loteRepository from "../repositories/lote.repository";
 
 
 // obtener todos los lotes

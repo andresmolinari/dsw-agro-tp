@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"; 
-import usuarioRepository from "./usuario.repository";
+import usuarioRepository from "../repositories/usuario.repository";
 import { Usuario } from "../models/usuario";
 
 // sanitizacion middleware

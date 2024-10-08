@@ -1,6 +1,6 @@
 import { Router } from "express";
 import validateToken from "./validate-token";
-import { controller } from "../lote/lote.controller";
+import { controller } from "../controllers/lote.controller";
 
 
 const loteRouter = Router();
