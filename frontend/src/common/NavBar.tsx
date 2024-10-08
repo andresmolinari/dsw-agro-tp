@@ -1,6 +1,14 @@
 import React, { useContext } from 'react';
-import { Button, Grid, Typography } from '@material-ui/core';
-import { AppBar, Box, Container, Stack, Toolbar } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AppRoutes } from '../types/AppRoutes';
 import { AuthContext } from '../context/AuthContext';
@@ -42,7 +50,8 @@ export const NavBar: React.FC = () => {
               </Grid>
               <Grid item>
                 <Stack direction='row' spacing={2}>
-                  {isAuthenticated && location.pathname === '/home' ? (
+                  {isAuthenticated &&
+                  location.pathname.includes(AppRoutes.HOME) ? (
                     <>
                       <Button variant='contained'>Option 1</Button>
                       <Button variant='outlined'>Option 2</Button>

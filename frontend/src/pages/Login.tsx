@@ -6,30 +6,41 @@ import {
   Box,
   TextField,
   Button,
+  styled,
 } from '@mui/material';
-import { styled } from '@material-ui/core';
+
 import NotificationService from '../utils/NotificationService';
+import UserService from '../services/UserService';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../types/AppRoutes';
 
 interface LoginType {
-  username: string;
+  name: string;
   password: string;
 }
 const Login = () => {
+  const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginType>({
-    username: '',
+    name: '',
     password: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // CUANDO ESTE LOGIN DEVUELVA UN 200 QUE GUARDE EL TOKE Y SINO QUE NOTIFIQUE EL ERROR
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Datos del usuario:', loginData); // Muestra los datos del formulario en la consola
-    localStorage.setItem('token', JSON.stringify(loginData)); // Almacena los datos en el Local Storage
+    // serService.login(loginData.username, loginData.password).then
+    // (response) => {
+    // console.log('Respuesta del servidor:', response);
+    // PORQUE ME HACE PONER UN ????
+    const token = await UserService.login(loginData.name, loginData.password);
+
+    localStorage.setItem('token', token.data || ''); // Almacena los datos en el Local Storage
     // Lógica de envío de formulario
     NotificationService.info('Inicio de sesión exitoso');
+    navigate(AppRoutes.HOME);
   };
 
   return (
@@ -47,8 +58,8 @@ const Login = () => {
               label='Nombre de Usuario'
               variant='outlined'
               required
-              name='username'
-              value={loginData.username}
+              name='name'
+              value={loginData.name}
               onChange={handleChange}
             />
             <TextField

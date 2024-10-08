@@ -38,22 +38,21 @@ class Server {
   middlewares() {
     // parseo body
     this.app.use(express.json());
+
+    // //   this.app.use((_, res) => {
+    // //     return res.status(404).send({ message: 'Resource not found' })
+    // //   })
+
+    //   // Cors
+    this.app.use(
+      cors({
+        origin: '*', // Permite solo este origen
+        methods: 'GET,POST,PUT,DELETE', // Permite solo estos métodos
+        allowedHeaders: 'Content-Type,Authorization', // Permite solo estos encabezados
+        credentials: true, // Permitir cookies o credenciales si es necesario
+      })
+    );
   }
-
-  // //   this.app.use((_, res) => {
-  // //     return res.status(404).send({ message: 'Resource not found' })
-  // //   })
-
-  //   // Cors
-  //   this.app.use(
-  //     cors({
-  //       origin: "http://localhost:4200", // Permite solo este origen
-  //       methods: "GET,POST,PUT,DELETE", // Permite solo estos métodos
-  //       allowedHeaders: "Content-Type,Authorization", // Permite solo estos encabezados
-  //       credentials: true  // Permitir cookies o credenciales si es necesario
-  //     })
-  //   );
-  // }
 
   // Conexión con la base de datos
   async dbConnect() {
