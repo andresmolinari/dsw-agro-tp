@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import { defineAssociations } from './associations';
+import { defineAssociations } from '../models/associations';
 import clienteRouter from '../routes/cliente.routes';
 import sequelize from '../db/connection';
 import campoRouter from '../routes/campo.routes';
@@ -59,8 +59,9 @@ class Server {
     try {
       defineAssociations();
 
+      await sequelize.sync();
       //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
-      await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
+      //await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
       console.log('Tablas sincronizadas');
     } catch (error) {
       // Capturar cualquier error durante la sincronización o conexión
