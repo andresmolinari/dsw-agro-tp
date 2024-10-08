@@ -5,12 +5,12 @@ import usuarioRepository from '../repositories/usuario.repository';
 export const getUserFromToken = (token: string): JwtPayload | null => {
   try {
     // Verificamos el token
-    const bearerToken = token.slice(7);
+    const bearerToken = token.startsWith("Bearer ") ? token.slice(7) : token;
     const decoded = jwt.verify(
       bearerToken,
       process.env.SECRET_KEY!
     ) as JwtPayload;
-    console.log(decoded);
+    console.log('Token decodificado:',decoded);
     // Buscamos el usuario en la base de datos (o desde el ORM o cualquier otro servicio)
     //  const user = users.find(user => user.id === decoded.id);
     // Validamos si el usuario existe en la base de datos
