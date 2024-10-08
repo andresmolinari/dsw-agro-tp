@@ -1,4 +1,4 @@
-import Server from "./models/server";
+import Server from "./services/server";
 import dotenv from 'dotenv';
 
 // Configuramos dotenv

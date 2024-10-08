@@ -1,5 +1,5 @@
 import { Router } from "express";
-import validateToken from "./validate-token";
+import validateToken from "../services/validate-token";
 import { controller } from "../controllers/lote.controller";
 
 

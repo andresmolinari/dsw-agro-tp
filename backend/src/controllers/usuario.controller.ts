@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import usuarioRepository from '../repositories/usuario.repository';
-import { Usuario } from '../models/usuario';
+import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import usuarioRepository from "../repositories/usuario.repository";
+import { Usuario } from "../models/usuario";
 
 // sanitizacion middleware
 // function sanitizeusuarioInput(req: Request, res: Response, next: NextFunction) {
@@ -47,7 +47,7 @@ const getUsuario = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json(usuario);
   } catch (error) {
     console.error(error); // Log para entender el error
-    res.status(500).json({ message: 'Error al obtener un usuario' });
+    res.status(500).json({ message: "Error al obtener un usuario" });
   }
 };
 
@@ -56,7 +56,7 @@ const createUsuario = async (req: Request, res: Response): Promise<void> => {
   const { usuarioNombre, usuarioEmail, usuarioContraseña } = req.body;
 
   if (!usuarioNombre || !usuarioEmail || !usuarioContraseña) {
-    res.status(400).json({ message: 'Todos los campos son requeridos' });
+    res.status(400).json({ message: "Todos los campos son requeridos" });
     return;
   }
 
@@ -64,12 +64,12 @@ const createUsuario = async (req: Request, res: Response): Promise<void> => {
   const existeEmail = await usuarioRepository.getUsuarioByEmail(usuarioEmail);
 
   if (existeNombre && existeNombre.usuarioNombre === usuarioNombre) {
-    res.status(400).json({ message: 'Ya existe un usuario con ese nombre' });
+    res.status(400).json({ message: "Ya existe un usuario con ese nombre" });
     return;
   }
 
   if (existeEmail && existeEmail.usuarioEmail === usuarioEmail) {
-    res.status(400).json({ message: 'Ya existe un usuario con ese email' });
+    res.status(400).json({ message: "Ya existe un usuario con ese email" });
     return;
   }
 
@@ -84,29 +84,29 @@ const createUsuario = async (req: Request, res: Response): Promise<void> => {
     res.status(201).json(newUsuario);
   } catch (error) {
     console.error(error); // Log para entender el error
-    res.status(500).json({ message: 'Error al crear usuario' });
+    res.status(500).json({ message: "Error al crear usuario" });
   }
 };
 
 // Login
 export const loginUser = async (req: Request, res: Response) => {
-  const { name, password } = req.body;
+  const { usuarioNombre, usuarioContraseña } = req.body;
 
   // Validamos si el usuario existe en la base de datos
-  console.log(name);
-  const user: any = await usuarioRepository.getUsuarioByName(name);
+
+  const user: any = await usuarioRepository.getUsuarioByName(usuarioNombre);
 
   if (!user) {
     return res.status(400).json({
-      msg: `No existe un usario con el nombre ${name} en la base de datos`,
+      msg: `No existe un usario con el nombre ${usuarioNombre} en la base de datos`,
     });
   }
 
   // Validamos password
   console.log(req.body);
-  //  const passwordValid = await bcrypt.compare(password, user.usuarioContraseña);
-  const passwordValid = password === user.usuarioContraseña;
-  console.log(password, user.usuarioContraseña);
+  const passwordValid = await bcrypt.compare(usuarioContraseña, user.usuarioContraseña);
+  
+  console.log(usuarioContraseña, user.usuarioContraseña);
   if (!passwordValid) {
     return res.status(400).json({
       msg: `Password incorrecta`,
@@ -116,12 +116,12 @@ export const loginUser = async (req: Request, res: Response) => {
   // Generamos token
   const token = jwt.sign(
     {
-      usuarioNombre: name,
       usuarioId: user.usuarioId,
+      usuarioNombre: usuarioNombre,
     },
-    process.env.SECRET_KEY || 'moli123'
+    process.env.SECRET_KEY || "moli123"
   );
-
+  console.log(user.usuarioId);
   res.json(token);
 };
 
@@ -138,7 +138,7 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     );
 
     if (!usuarioActual) {
-      res.status(404).json({ message: 'usuario no encontrado' });
+      res.status(404).json({ message: "usuario no encontrado" });
       return;
     }
 
@@ -151,7 +151,7 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
       if (existeNombre) {
         res
           .status(400)
-          .json({ message: 'Ya existe un usuario con ese nombre' });
+          .json({ message: "Ya existe un usuario con ese nombre" });
         return;
       }
     }
@@ -168,8 +168,8 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     // Retornar la respuesta exitosa
     res.status(200).json(updatedUsuario);
   } catch (error) {
-    console.error('Error al actualizar usuario:', error);
-    res.status(500).json({ message: 'Error al actualizar usuario' });
+    console.error("Error al actualizar usuario:", error);
+    res.status(500).json({ message: "Error al actualizar usuario" });
   }
 };
 
@@ -183,13 +183,13 @@ const deleteUsuario = async (req: Request, res: Response): Promise<void> => {
     );
 
     if (usuarioEliminado) {
-      res.status(200).json({ message: 'usuario eliminado correctamente' });
+      res.status(200).json({ message: "usuario eliminado correctamente" });
     } else {
-      res.status(404).json({ message: 'usuario no encontrado' });
+      res.status(404).json({ message: "usuario no encontrado" });
     }
   } catch (error) {
-    console.error('Error al eliminar usuario:', error);
-    res.status(500).json({ message: 'Error al eliminar usuario' });
+    console.error("Error al eliminar usuario:", error);
+    res.status(500).json({ message: "Error al eliminar usuario" });
   }
 };
 
