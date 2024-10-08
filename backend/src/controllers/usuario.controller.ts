@@ -93,6 +93,7 @@ export const loginUser = async (req: Request, res: Response) => {
   const { name, password } = req.body;
 
   // Validamos si el usuario existe en la base de datos
+  console.log(name);
   const user: any = await usuarioRepository.getUsuarioByName(name);
 
   if (!user) {
