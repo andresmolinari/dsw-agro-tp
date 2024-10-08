@@ -18,6 +18,11 @@ interface LoginType {
   name: string;
   password: string;
 }
+
+interface LoginResponse {
+  token: string;
+}
+
 const Login = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginType>({
@@ -28,19 +33,26 @@ const Login = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
-  // CUANDO ESTE LOGIN DEVUELVA UN 200 QUE GUARDE EL TOKE Y SINO QUE NOTIFIQUE EL ERROR
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // serService.login(loginData.username, loginData.password).then
-    // (response) => {
-    // console.log('Respuesta del servidor:', response);
-    // PORQUE ME HACE PONER UN ????
-    const token = await UserService.login(loginData.name, loginData.password);
 
-    localStorage.setItem('token', token.data || ''); // Almacena los datos en el Local Storage
-    // Lógica de envío de formulario
-    NotificationService.info('Inicio de sesión exitoso');
-    navigate(AppRoutes.HOME);
+    try {
+      const response = await UserService.login(
+        loginData.name,
+        loginData.password
+      );
+      const data: LoginResponse = response.data;
+      if (response.status === 200) {
+        localStorage.setItem('token', data.token || '');
+        NotificationService.info('Inicio de sesión exitoso');
+        navigate(AppRoutes.HOME);
+      } else {
+        NotificationService.error('Error en el inicio de sesión');
+      }
+    } catch (error) {
+      NotificationService.error('Error en el inicio de sesión');
+    }
   };
 
   return (
