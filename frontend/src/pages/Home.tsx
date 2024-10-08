@@ -2,7 +2,7 @@ import { Button, Container } from '@mui/material';
 
 interface Props {}
 
-const HomePaige = (props: Props) => {
+const Home = (props: Props) => {
   console.log('HomePaige');
   return (
     <Container style={{ marginTop: '9rem' }} maxWidth='xl'>
@@ -13,4 +13,4 @@ const HomePaige = (props: Props) => {
   );
 };
 
-export default HomePaige;
+export default Home;

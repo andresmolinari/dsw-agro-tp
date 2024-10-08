@@ -5,6 +5,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AppRoutes } from '../types/AppRoutes';
 import { AuthContext } from '../context/AuthContext';
 
+/**
+ * NavBar component.
+ *
+ * Aca se muestra lo que va en la navbar dependiendo si esta logueado o no el usuario.
+ * En caso de no estar en Home, muestra los botones de Login y Register.
+ */
 export const NavBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
