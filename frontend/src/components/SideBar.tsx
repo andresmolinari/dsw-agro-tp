@@ -18,7 +18,11 @@ const ListItemLink = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
   <Link ref={ref} {...props} />
 ));
 
-const SideBar = () => {
+interface SideBarProps {
+  style?: React.CSSProperties;
+}
+
+const SideBar = ({ style }: SideBarProps) => {
   return (
     <Drawer
       sx={{
@@ -27,14 +31,16 @@ const SideBar = () => {
         '& .MuiDrawer-paper': {
           width: drawerWidth,
           boxSizing: 'border-box',
+          top: '64px',
+          height: 'calc(100vh - 64px)',
         },
       }}
       variant='permanent'
       anchor='left'
+      style={style}
     >
       <Toolbar />
       <List>
-        {/* Botón Nuevo Trabajo */}
         <ListItem button component={ListItemLink as any} to='/nuevo-trabajo'>
           <ListItemIcon>
             <WorkIcon />
@@ -42,7 +48,6 @@ const SideBar = () => {
           <ListItemText primary='Nuevo Trabajo' />
         </ListItem>
 
-        {/* Botón Mis Trabajos */}
         <ListItem button component={ListItemLink as any} to='/mis-trabajos'>
           <ListItemIcon>
             <AssignmentIcon />
@@ -50,7 +55,6 @@ const SideBar = () => {
           <ListItemText primary='Mis Trabajos' />
         </ListItem>
 
-        {/* Botón Mis Clientes */}
         <ListItem button component={ListItemLink as any} to='/mis-clientes'>
           <ListItemIcon>
             <GroupIcon />
