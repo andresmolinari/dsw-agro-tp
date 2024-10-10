@@ -1,4 +1,3 @@
-import { forwardRef } from 'react';
 import {
   Drawer,
   List,
@@ -6,64 +5,87 @@ import {
   ListItemText,
   Toolbar,
   ListItemIcon,
+  paperClasses,
+  Button,
+  styled,
+  buttonClasses,
 } from '@mui/material';
 import WorkIcon from '@mui/icons-material/Work';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import GroupIcon from '@mui/icons-material/Group';
-import { Link, LinkProps } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../types/AppRoutes';
+import { ThemePalette } from './theme.config';
 
-const drawerWidth = 240;
-
-const ListItemLink = forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
-  <Link ref={ref} {...props} />
-));
-
-interface SideBarProps {
-  style?: React.CSSProperties;
-}
-
-const SideBar = ({ style }: SideBarProps) => {
+const SideBar = () => {
+  const navigate = useNavigate();
+  const onClickButton = (url: AppRoutes) => {
+    navigate(url);
+  };
   return (
     <Drawer
       sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-          top: '64px',
-          height: 'calc(100vh - 64px)',
+        [`& .${paperClasses.root}`]: {
+          position: 'static',
         },
       }}
       variant='permanent'
       anchor='left'
-      style={style}
     >
       <Toolbar />
       <List>
-        <ListItem button component={ListItemLink as any} to='/nuevo-trabajo'>
-          <ListItemIcon>
-            <WorkIcon />
-          </ListItemIcon>
-          <ListItemText primary='Nuevo Trabajo' />
+        <ListItem>
+          <SyledButton
+            onClick={() => {
+              onClickButton(AppRoutes.NUEVO_TRABAJO);
+            }}
+          >
+            <ListItemIcon>
+              <WorkIcon />
+            </ListItemIcon>
+            <ListItemText primary='Nuevo Trabajo' />
+          </SyledButton>
         </ListItem>
 
-        <ListItem button component={ListItemLink as any} to='/mis-trabajos'>
-          <ListItemIcon>
-            <AssignmentIcon />
-          </ListItemIcon>
-          <ListItemText primary='Mis Trabajos' />
+        <ListItem>
+          <SyledButton
+            onClick={() => {
+              onClickButton(AppRoutes.MIS_TRABAJOS);
+            }}
+          >
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary='Mis Trabajos' />
+          </SyledButton>
         </ListItem>
 
-        <ListItem button component={ListItemLink as any} to='/mis-clientes'>
-          <ListItemIcon>
-            <GroupIcon />
-          </ListItemIcon>
-          <ListItemText primary='Mis Clientes' />
+        <ListItem>
+          <SyledButton
+            onClick={() => {
+              onClickButton(AppRoutes.MIS_CLIENTES);
+            }}
+          >
+            <ListItemIcon>
+              <GroupIcon />
+            </ListItemIcon>
+            <ListItemText primary='Mis Clientes' />
+          </SyledButton>
         </ListItem>
       </List>
     </Drawer>
   );
 };
+
+const SyledButton = styled(Button)(({}) => ({
+  minWidth: '210px',
+  color: 'black',
+  [`&.${buttonClasses.root}`]: {
+    justifyContent: 'normal',
+  },
+  '&:hover': {
+    backgroundColor: ThemePalette.LIME,
+  },
+}));
 
 export default SideBar;

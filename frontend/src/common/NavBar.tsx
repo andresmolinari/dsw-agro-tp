@@ -4,32 +4,23 @@ import {
   Box,
   Button,
   Container,
-  Grid,
   Stack,
+  styled,
   Toolbar,
   Typography,
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AppRoutes } from '../types/AppRoutes';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
-/**
- * NavBar component.
- *
- * Aca se muestra lo que va en la navbar dependiendo si esta logueado o no el usuario.
- * En caso de no estar en Home, muestra los botones de Login y Register.
- */
 export const NavBar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const authContext = useContext(AuthContext);
-
-  const isAuthenticated = authContext?.isAuthenticated || false; // Si es undefined, false por defecto
-
+  const { isAuthenticated } = useAuth();
   const onClickLoginButton = () => {
     navigate(AppRoutes.LOGIN);
   };
-
+  // hacer los buttons como la sidebar
   const onClickRegisterButton = () => {
     navigate(AppRoutes.REGISTER);
   };
@@ -39,39 +30,31 @@ export const NavBar: React.FC = () => {
       <AppBar position='fixed'>
         <Toolbar>
           <Container>
-            <Grid
-              container
-              direction='row'
+            <Box
+              display='flex'
               justifyContent='space-between'
               alignItems='center'
+              width='100%'
             >
-              <Grid item>
-                <Typography>Agro</Typography>
-              </Grid>
-              <Grid item>
-                <Stack direction='row' spacing={2}>
-                  {isAuthenticated &&
-                  location.pathname.includes(AppRoutes.HOME) ? (
-                    <>
-                      <Button variant='contained'>Option 1</Button>
-                      <Button variant='outlined'>Option 2</Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button variant='contained' onClick={onClickLoginButton}>
-                        Login
-                      </Button>
-                      <Button
-                        variant='outlined'
-                        onClick={onClickRegisterButton}
-                      >
-                        Register
-                      </Button>
-                    </>
-                  )}
-                </Stack>
-              </Grid>
-            </Grid>
+              <Typography>Agro</Typography>
+              <Stack direction='row' spacing={2}>
+                {isAuthenticated ? (
+                  <>
+                    <Button variant='contained'>Option 1</Button>
+                    <Button variant='outlined'>Option 2</Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant='contained' onClick={onClickLoginButton}>
+                      Login
+                    </Button>
+                    <RegisterButton onClick={onClickRegisterButton}>
+                      Register
+                    </RegisterButton>
+                  </>
+                )}
+              </Stack>
+            </Box>
           </Container>
         </Toolbar>
       </AppBar>
@@ -79,4 +62,13 @@ export const NavBar: React.FC = () => {
   );
 };
 
+const RegisterButton = styled(Button)(({ theme }) => ({
+  backgroundColor: 'rgba(255,255,255,0.1)',
+  color: '#333', // Texto más oscuro
+  borderColor: theme.palette.primary.main,
+  '&:hover': {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    color: '#222',
+  },
+}));
 export default NavBar;

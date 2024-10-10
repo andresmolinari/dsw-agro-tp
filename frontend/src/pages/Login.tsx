@@ -13,6 +13,7 @@ import NotificationService from '../utils/NotificationService';
 import UserService from '../services/UserService';
 import { useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../types/AppRoutes';
+import { useAuth } from '../context/AuthContext';
 
 interface LoginType {
   name: string;
@@ -20,6 +21,7 @@ interface LoginType {
 }
 
 const Login = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginType>({
     name: '',
@@ -41,9 +43,14 @@ const Login = () => {
       const data: string = response.data;
       console.log(data);
       if (response.status === 200) {
-        localStorage.setItem('token', data);
-        NotificationService.info('Inicio de sesión exitoso');
-        navigate(AppRoutes.HOME);
+        if (data !== null && data !== undefined && data !== '') {
+          login();
+          localStorage.setItem('token', data);
+          NotificationService.info('Inicio de sesión exitoso');
+          navigate(AppRoutes.HOME);
+        } else {
+          NotificationService.error('Token no valido');
+        }
       } else {
         NotificationService.error('Error en el inicio de sesión');
       }

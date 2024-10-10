@@ -41,7 +41,7 @@ const themeOptions: ThemeOptions = {
           backgroundColor: ThemePalette.LIME,
           fontFamily: ThemePalette.FONT_GLOBAL,
           '&:hover': {
-            backgroundColor: '#8aa517', // Color de hover
+            backgroundColor: 'rgba(255,255,255,0.2)', // Color de hover
           },
         },
       },
