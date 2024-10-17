@@ -1,11 +1,13 @@
 import { Box } from '@mui/material';
 import SideBar from '../components/SideBar';
 import { NavBar } from './NavBar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const AppLayout: React.FC<{}> = () => {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  const showSideBar = isAuthenticated && location.pathname !== '/';
   return (
     <div>
       <NavBar />
@@ -15,7 +17,7 @@ export const AppLayout: React.FC<{}> = () => {
           flexDirection: 'row',
         }}
       >
-        {isAuthenticated && <SideBar />}
+        {showSideBar && <SideBar />}
         {/* Contenedor principal que incluye el Sidebar y el contenido, debajo de la NavBar */}
         <div
           style={{

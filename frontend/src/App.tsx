@@ -4,22 +4,47 @@ import { useEffect } from 'react';
 import { useAuth } from './context/AuthContext';
 import { AppRoutes } from './types/AppRoutes';
 import NotificationService from './utils/NotificationService';
-
+import { jwtDecode } from 'jwt-decode';
 const App: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
+
   useEffect(() => {
-    // Your effect logic here
     const token = localStorage.getItem('token');
     if (token !== null && token !== undefined && token !== '') {
-      login();
+      try {
+        const decodedToken: { exp: number } = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
 
-      navigate(AppRoutes.HOME);
+        if (decodedToken.exp < currentTime) {
+          // Token expirado
+          localStorage.removeItem('token');
+          logout();
+          navigate('/');
+          NotificationService.error('Token ha expirado');
+        } else {
+          // Token valido
+          login();
+        }
+      } catch (error) {
+        // Token invalido
+        localStorage.removeItem('token');
+        logout();
+        navigate('/');
+        NotificationService.error('Token no válido');
+      }
     } else {
-      navigate(AppRoutes.LOGIN);
-      NotificationService.error('Token no valido');
+      const currentPath = window.location.pathname;
+      if (
+        currentPath !== AppRoutes.REGISTER &&
+        currentPath !== AppRoutes.LOGIN
+      ) {
+        navigate('/');
+        NotificationService.error('Token no encontrado');
+      }
     }
-  }, []);
+  }, [login, logout, navigate]);
+
   return <AppRouter />;
 };
 
