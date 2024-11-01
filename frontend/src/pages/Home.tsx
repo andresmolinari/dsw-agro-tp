@@ -1,5 +1,5 @@
 import { Button, Container } from '@mui/material';
-import SideBar from '../components/SideBar';
+
 import { Outlet } from 'react-router-dom';
 
 interface Props {}
