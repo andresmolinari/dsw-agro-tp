@@ -12,6 +12,7 @@ import {
   Alert,
   Box,
   Button,
+  Stack,
 } from '@mui/material';
 import { Cliente } from '../types/Cliente';
 import { Add, Delete, Edit } from '@mui/icons-material';
@@ -118,13 +119,13 @@ const MisClientes: React.FC = () => {
     return <Alert severity='error'>{error}</Alert>;
   }
 
- return (
-    <TableContainer component={Paper}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant='h6' component='div' gutterBottom>
+  return (
+    <TableContainer component={Paper} sx={{ padding: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
+        <Typography variant="h6" component="div">
           Lista de Clientes
         </Typography>
-        <Button variant='contained' color='primary' onClick={handleOpenModal}>
+        <Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ marginRight: 2 }}>
           Cliente <Add />
         </Button>
       </Box>
@@ -137,7 +138,7 @@ const MisClientes: React.FC = () => {
             <TableCell>Dirección</TableCell>
             <TableCell>Localidad</TableCell>
             <TableCell>Provincia</TableCell>
-            <TableCell>Acciones</TableCell> 
+            <TableCell>Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -150,20 +151,24 @@ const MisClientes: React.FC = () => {
               <TableCell>{cliente.clienteLocalidad}</TableCell>
               <TableCell>{cliente.clienteProvincia}</TableCell>
               <TableCell>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEdit(cliente)}
-                  startIcon={<Edit />}
-                >
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleDelete(cliente.clienteId)}
-                  startIcon={<Delete />}
-                >
-                </Button>
+                <Stack direction="row" spacing={1}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEdit(cliente)}
+                    sx={{ minWidth: '40px', padding: '8px', display: 'flex', justifyContent: 'center' }}
+                  >
+                    <Edit />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDelete(cliente.clienteId)}
+                    sx={{ minWidth: '40px', padding: '8px', display: 'flex', justifyContent: 'center' }}
+                  >
+                    <Delete />
+                  </Button>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}
