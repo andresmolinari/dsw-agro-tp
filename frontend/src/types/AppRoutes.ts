@@ -5,4 +5,5 @@ export enum AppRoutes {
   NUEVO_TRABAJO = '/nuevo-trabajo',
   MIS_TRABAJOS = '/mis-trabajos',
   MIS_CLIENTES = '/mis-clientes',
+  NUEVO_CLIENTE = '/nuevo-cliente',
 }
