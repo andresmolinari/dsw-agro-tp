@@ -40,6 +40,32 @@ const getCliente = async (clienteId: number, usuarioId: number): Promise<Cliente
   }
 };
 
+const getClienteCampos = async (clienteId: number, usuarioId: number): Promise<Cliente | null> => {
+  try {
+    const cliente = await Cliente.findOne({
+      where: {
+        clienteId: clienteId,
+        usuarioId: usuarioId,
+      },
+      include: [
+        {
+          model: Campo,
+          attributes: [
+            "campoId",
+            "campoNombre",
+            "campoUbicacion",
+          ],
+          as: "campos",
+        },
+      ],
+    });
+    return cliente;
+  } catch (error) {
+    console.error("Error en la consulta a la base de datos:", error);
+    throw error;
+  }
+};
+
 // obtener cliente por nombre
 const getClienteByName = async (clienteNombre: string, usuarioId: number): Promise<Cliente | null> => {
   try {
@@ -125,6 +151,7 @@ const deleteCliente = async (clienteId: number): Promise<boolean> => {
 const clienteRepository = {
   getClientes,
   getCliente,
+  getClienteCampos,
   getClienteByName,
   createCliente,
   updateCliente,

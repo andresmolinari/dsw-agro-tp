@@ -3,8 +3,7 @@ import sequelize from "../db/connection"; // importa tu instancia de Sequelize
 
 export class OrdenTrabajo extends Model {
   public nroOrdenTrabajo!: number;
-  public fechaInicio!: Date;
-  public fechaFin!: Date;
+  public fecha!: Date;
   public costototal!: number;
   public LoteId!: number;
   public tipo!: "cosecha" | "siembra" | "fumigacion";
@@ -18,7 +17,7 @@ OrdenTrabajo.init(
       autoIncrement: true, 
     },
     fecha: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
     },
     costototal: {

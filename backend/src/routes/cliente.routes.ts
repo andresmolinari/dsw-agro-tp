@@ -6,6 +6,7 @@ const clienteRouter = Router();
 
 clienteRouter.get('/misClientes', validateToken, controller.getClientes);
 clienteRouter.get('/:clienteId', validateToken, controller.getCliente);
+clienteRouter.get('/:clienteId/campos', validateToken, controller.getClienteCampos);
 clienteRouter.post('/', validateToken, controller.createCliente);
 clienteRouter.put('/:clienteId', validateToken, controller.updateCliente);
 clienteRouter.delete('/:clienteId', validateToken, controller.deleteCliente);
