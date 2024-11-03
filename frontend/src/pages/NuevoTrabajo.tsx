@@ -37,6 +37,7 @@ const MisTrabajos: React.FC = () => {
   const [detalle, setDetalle] = useState<DetalleTrabajo>({});
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [mensaje, setMensaje] = useState<string>('');
+  const [importe, setImporte] = useState<number>(0);
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -121,6 +122,13 @@ const MisTrabajos: React.FC = () => {
       setHectareas('');
     }
   };
+
+  useEffect(() => {
+    // Calcula el importe cuando cambian el precio o las hectáreas
+    const precio = detalle.precio || 0;
+    const hectareasNumber = typeof hectareas === 'number' ? hectareas : 0;
+    setImporte(precio * hectareasNumber);
+  }, [detalle.precio, hectareas]);
 
   const handleTipoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedTipo = event.target.value;
@@ -323,6 +331,14 @@ const MisTrabajos: React.FC = () => {
             type='number'
             fullWidth
             value={hectareas}
+            disabled
+          />
+
+          <TextField
+            label='Importe'
+            type='number'
+            fullWidth
+            value={importe}
             disabled
           />
 
