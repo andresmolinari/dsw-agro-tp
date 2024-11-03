@@ -1,12 +1,20 @@
 // NuevoCliente.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { TextField, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
-
+import {
+  TextField,
+  Button,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+} from '@mui/material';
 
 interface NuevoClienteProps {
   open: boolean;
   onClose: () => void;
-  onClienteCreado: () => void; 
+  onClienteCreado: () => void;
 }
 
 interface FormValues {
@@ -18,7 +26,11 @@ interface FormValues {
   provincia: string;
 }
 
-const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCreado }) => {
+const NuevoCliente: React.FC<NuevoClienteProps> = ({
+  open,
+  onClose,
+  onClienteCreado,
+}) => {
   const [formValues, setFormValues] = useState<FormValues>({
     nombre: '',
     email: '',
@@ -66,11 +78,18 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
         setError(errorData.message || 'Error al crear cliente');
         return;
       }
-  
+
       setSuccess('Cliente creado con éxito');
-      setFormValues({ nombre: '', email: '', telefono: '', direccion: '', localidad: '', provincia: '' });
+      setFormValues({
+        nombre: '',
+        email: '',
+        telefono: '',
+        direccion: '',
+        localidad: '',
+        provincia: '',
+      });
       onClienteCreado();
-      onClose(); 
+      onClose();
     } catch (error) {
       setError('Error al conectar con el servidor');
       console.error(error);
@@ -78,25 +97,72 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
       <DialogTitle>Crear Nuevo Cliente</DialogTitle>
       <DialogContent>
-        {error && <Alert severity="error">{error}</Alert>}
-        {success && <Alert severity="success">{success}</Alert>}
+        {error && <Alert severity='error'>{error}</Alert>}
+        {success && <Alert severity='success'>{success}</Alert>}
         <form onSubmit={handleSubmit}>
           <Stack spacing={2} sx={{ mt: 2 }}>
-            <TextField label="Nombre" name="nombre" fullWidth required value={formValues.nombre} onChange={handleChange} />
-            <TextField label="Email" name="email" fullWidth required type="email" value={formValues.email} onChange={handleChange} />
-            <TextField label="Teléfono" name="telefono" fullWidth required value={formValues.telefono} onChange={handleChange} />
-            <TextField label="Dirección" name="direccion" fullWidth required value={formValues.direccion} onChange={handleChange} />
-            <TextField label="Localidad" name="localidad" fullWidth required value={formValues.localidad} onChange={handleChange} />
-            <TextField label="Provincia" name="provincia" fullWidth required value={formValues.provincia} onChange={handleChange} />
+            <TextField
+              label='Nombre'
+              name='nombre'
+              fullWidth
+              required
+              value={formValues.nombre}
+              onChange={handleChange}
+            />
+            <TextField
+              label='Email'
+              name='email'
+              fullWidth
+              required
+              type='email'
+              value={formValues.email}
+              onChange={handleChange}
+            />
+            <TextField
+              label='Teléfono'
+              name='telefono'
+              fullWidth
+              required
+              value={formValues.telefono}
+              onChange={handleChange}
+            />
+            <TextField
+              label='Dirección'
+              name='direccion'
+              fullWidth
+              required
+              value={formValues.direccion}
+              onChange={handleChange}
+            />
+            <TextField
+              label='Localidad'
+              name='localidad'
+              fullWidth
+              required
+              value={formValues.localidad}
+              onChange={handleChange}
+            />
+            <TextField
+              label='Provincia'
+              name='provincia'
+              fullWidth
+              required
+              value={formValues.provincia}
+              onChange={handleChange}
+            />
           </Stack>
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">Cancelar</Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">Guardar Cliente</Button>
+        <Button onClick={onClose} color='secondary'>
+          Cancelar
+        </Button>
+        <Button onClick={handleSubmit} variant='contained' color='primary'>
+          Guardar Cliente
+        </Button>
       </DialogActions>
     </Dialog>
   );

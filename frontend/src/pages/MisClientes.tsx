@@ -19,14 +19,14 @@ import { Add, Delete, Edit } from '@mui/icons-material';
 import NuevoCliente from './NuevoCliente';
 import ActualizarCliente from './ActualizarCliente';
 
-
 const MisClientes: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [openModal, setOpenModal] = useState<boolean>(false); 
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
+  const [clienteSeleccionado, setClienteSeleccionado] =
+    useState<Cliente | null>(null);
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -39,14 +39,17 @@ const MisClientes: React.FC = () => {
   const handleUpdateCliente = (updatedCliente: Cliente) => {
     (async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/clientes/${updatedCliente.clienteId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-          body: JSON.stringify(updatedCliente),
-        });
+        const response = await fetch(
+          `http://localhost:3000/api/clientes/${updatedCliente.clienteId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(updatedCliente),
+          }
+        );
         if (!response.ok) {
           throw new Error('Error al actualizar el cliente');
         }
@@ -84,17 +87,18 @@ const MisClientes: React.FC = () => {
     }
   };
 
-
-
   const handleDelete = async (clienteId: number) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/clientes/${clienteId}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:3000/api/clientes/${clienteId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error('Error al eliminar el cliente');
         }
@@ -121,11 +125,23 @@ const MisClientes: React.FC = () => {
 
   return (
     <TableContainer component={Paper} sx={{ padding: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 }}>
-        <Typography variant="h6" component="div">
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 2,
+        }}
+      >
+        <Typography variant='h6' component='div'>
           Lista de Clientes
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleOpenModal} sx={{ marginRight: 2 }}>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={handleOpenModal}
+          sx={{ marginRight: 2 }}
+        >
           Cliente <Add />
         </Button>
       </Box>
@@ -151,20 +167,30 @@ const MisClientes: React.FC = () => {
               <TableCell>{cliente.clienteLocalidad}</TableCell>
               <TableCell>{cliente.clienteProvincia}</TableCell>
               <TableCell>
-                <Stack direction="row" spacing={1}>
+                <Stack direction='row' spacing={1}>
                   <Button
-                    variant="contained"
-                    color="primary"
+                    variant='contained'
+                    color='primary'
                     onClick={() => handleEdit(cliente)}
-                    sx={{ minWidth: '40px', padding: '8px', display: 'flex', justifyContent: 'center' }}
+                    sx={{
+                      minWidth: '40px',
+                      padding: '8px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
                   >
                     <Edit />
                   </Button>
                   <Button
-                    variant="contained"
-                    color="secondary"
+                    variant='contained'
+                    color='secondary'
                     onClick={() => handleDelete(cliente.clienteId)}
-                    sx={{ minWidth: '40px', padding: '8px', display: 'flex', justifyContent: 'center' }}
+                    sx={{
+                      minWidth: '40px',
+                      padding: '8px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
                   >
                     <Delete />
                   </Button>
@@ -174,7 +200,11 @@ const MisClientes: React.FC = () => {
           ))}
         </TableBody>
       </Table>
-      <NuevoCliente open={openModal} onClose={handleCloseModal} onClienteCreado={fetchClientes} />
+      <NuevoCliente
+        open={openModal}
+        onClose={handleCloseModal}
+        onClienteCreado={fetchClientes}
+      />
       <ActualizarCliente
         cliente={clienteSeleccionado}
         open={openEditModal}
