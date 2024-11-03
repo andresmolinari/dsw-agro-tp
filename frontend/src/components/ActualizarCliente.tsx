@@ -17,7 +17,12 @@ interface ActualizarClienteProps {
   onSave: (updatedCliente: Cliente) => void;
 }
 
-const ActualizarCliente: React.FC<ActualizarClienteProps> = ({ cliente, open, onClose, onSave }) => {
+const ActualizarCliente: React.FC<ActualizarClienteProps> = ({
+  cliente,
+  open,
+  onClose,
+  onSave,
+}) => {
   const [formValues, setFormValues] = useState<Cliente | null>(null);
 
   useEffect(() => {
@@ -45,55 +50,55 @@ const ActualizarCliente: React.FC<ActualizarClienteProps> = ({ cliente, open, on
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
       <DialogTitle>Actualizar Cliente</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <Stack spacing={2} sx={{ mt: 2 }}>
             <TextField
-              label="Nombre"
-              name="clienteNombre"
+              label='Nombre'
+              name='clienteNombre'
               fullWidth
               required
               value={formValues?.clienteNombre || ''}
               onChange={handleChange}
             />
             <TextField
-              label="Email"
-              name="clienteEmail"
+              label='Email'
+              name='clienteEmail'
               fullWidth
               required
-              type="email"
+              type='email'
               value={formValues?.clienteEmail || ''}
               onChange={handleChange}
             />
             <TextField
-              label="Teléfono"
-              name="clienteTelefono"
+              label='Teléfono'
+              name='clienteTelefono'
               fullWidth
               required
               value={formValues?.clienteTelefono || ''}
               onChange={handleChange}
             />
             <TextField
-              label="Dirección"
-              name="clienteDireccion"
+              label='Dirección'
+              name='clienteDireccion'
               fullWidth
               required
               value={formValues?.clienteDireccion || ''}
               onChange={handleChange}
             />
             <TextField
-              label="Localidad"
-              name="clienteLocalidad"
+              label='Localidad'
+              name='clienteLocalidad'
               fullWidth
               required
               value={formValues?.clienteLocalidad || ''}
               onChange={handleChange}
             />
             <TextField
-              label="Provincia"
-              name="clienteProvincia"
+              label='Provincia'
+              name='clienteProvincia'
               fullWidth
               required
               value={formValues?.clienteProvincia || ''}
@@ -103,10 +108,10 @@ const ActualizarCliente: React.FC<ActualizarClienteProps> = ({ cliente, open, on
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={onClose} color='secondary'>
           Cancelar
         </Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+        <Button onClick={handleSubmit} variant='contained' color='primary'>
           Guardar Cambios
         </Button>
       </DialogActions>

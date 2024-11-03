@@ -17,7 +17,7 @@ import {
 import { Cliente } from '../types/Cliente';
 import { Add, Delete, Edit } from '@mui/icons-material';
 import NuevoCliente from './NuevoCliente';
-import ActualizarCliente from './ActualizarCliente';
+import ActualizarCliente from '../components/ActualizarCliente';
 
 const MisClientes: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
