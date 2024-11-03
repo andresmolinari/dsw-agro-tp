@@ -26,12 +26,23 @@ const getCampos = async (clienteId: number): Promise<Campo[]> => {
 
 //obtener un campo
 const getCampo = async (
-  campoId: number,
-  clienteId: number
+   campoId: number
+ 
 ): Promise<Campo | null> => {
   try {
     const campo = await Campo.findOne({
-      where: { campoId: campoId, clienteId: clienteId },
+      where: { campoId: campoId  },
+      include: [
+        {
+          model: Lote,
+          attributes: [
+            "loteId",
+            "loteNro",
+            "loteHectareas",
+          ],
+          as: "lotes",
+        },
+      ],
     });
     return campo;
   } catch (error) {

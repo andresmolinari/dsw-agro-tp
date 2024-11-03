@@ -3,35 +3,38 @@ import { OrdenTrabajo } from "../models/ordenTrabajo";
 import { Cosecha } from "../models/cosecha";
 import { Siembra } from "../models/siembra";
 import { Fumigacion } from "../models/fumigacion";
-import { Transaction } from "sequelize";
-import sequelize from "../db/connection"; // tu instancia de Sequelize
+import { DateOnlyDataType, Transaction } from "sequelize";
+import sequelize from "../db/connection"; 
 
 const createOrdenTrabajo = async (
+  fecha: DateOnlyDataType,
   tipo: string,
   loteId: number,
+  detalle: any,
   usuarioId: number,
-  detalle: any
+  costoTotal: number
 ): Promise<OrdenTrabajo> => {
   return await sequelize.transaction(async (t: Transaction) => {
     // Crear la orden de trabajo
+    
     const orden = await OrdenTrabajo.create(
       {
+        fecha: fecha,
         tipo: tipo,
         loteId: loteId,
-        fecha: new Date(), // Asignar la fecha de hoy
         usuarioId: usuarioId,
-        costoTotal: detalle.precio,
+        costototal: costoTotal,
       },
       { transaction: t }
     );
 
-    // Ahora que tenemos el nroOrdenTrabajo generado, creamos el detalle
+    // creamos el detalle
     if (tipo === "cosecha") {
       await Cosecha.create(
         {
           rendimiento: detalle.rendimiento,
           precio: detalle.precio,
-          OrdenTrabajoId: orden.nroOrdenTrabajo, // Aquí se utiliza correctamente
+          OrdenTrabajoId: orden.nroOrdenTrabajo,
         },
         { transaction: t }
       );

@@ -68,6 +68,30 @@ const getCliente = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// // obtener un cliente
+const getClienteCampos = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clienteId = parseInt(req.params.clienteId, 10);
+    // Obtenemos el usuario desde el token
+    const token = req.headers.authorization || "";
+    const user = getUserFromToken(token);
+
+    if (!user) {
+      res.status(401).json({ message: "Usuario no autorizado" });
+      return;
+    }
+    const cliente = await clienteRepository.getClienteCampos(
+      clienteId,
+      user.usuarioId
+    );
+    res.status(200).json(cliente);
+
+    //res.status(200).json(cliente);
+  } catch (error) {
+    console.error(error); // Log para entender el error
+    res.status(500).json({ message: "Error al obtener un cliente" });
+  }
+};
 // Crear cliente
 const createCliente = async (req: Request, res: Response): Promise<void> => {
   const token = req.headers.authorization || "";
@@ -207,6 +231,7 @@ export const controller = {
   // sanitizeClienteInput,
   getClientes,
   getCliente,
+  getClienteCampos,
   createCliente,
   updateCliente,
   deleteCliente,

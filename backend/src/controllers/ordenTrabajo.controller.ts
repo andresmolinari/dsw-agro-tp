@@ -2,10 +2,11 @@
 import { Request, Response } from 'express';
 import { ordenTrabajoRepository } from '../repositories/ordenTrabajo.repository';
 import { getUserFromToken } from '../services/user.services';
+import loteRepository from '../repositories/lote.repository';
 
 
   const createOrdenTrabajo = async (req: Request, res: Response): Promise<void> => {
-    const { tipo, loteId, detalle } = req.body;
+    const { fecha,tipo, loteId, campoId,detalle } = req.body;
     // Obtenemos el usuario desde el token
     const token = req.headers.authorization || "";
     const user = getUserFromToken(token);
@@ -19,12 +20,20 @@ import { getUserFromToken } from '../services/user.services';
         res.status(401).json({ message: "Usuario no autorizado" });
         return;
       }
-      // Llama al repository para crear la orden
+      const lote = await loteRepository.getLote(loteId, campoId);
+      if (!lote) {
+        res.status(404).json({ message: "Lote no encontrado" });
+        return;
+      }
+      const costoTotal = detalle.precio * lote.loteHectareas;
+     
       const orden = await ordenTrabajoRepository.createOrdenTrabajo(
+        fecha,
         tipo,
         loteId,
+        detalle,
         user.usuarioId,
-        detalle
+        costoTotal
       );
     
        res.status(201).json({

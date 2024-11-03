@@ -17,9 +17,9 @@ const getCampos = async (req: Request, res: Response): Promise<void> => {
 const getCampo = async (req: Request, res: Response): Promise<void> => {
   try {
     const campoId = parseInt(req.params.campoId, 10);
-    const clienteId = parseInt(req.params.campoId, 10);
+    //const clienteId = parseInt(req.params.clienteId, 10);
 
-    const campo = await campoRepository.getCampo(campoId, clienteId);
+    const campo = await campoRepository.getCampo(campoId );
 
     res.status(200).json(campo);
   } catch (error) {
@@ -63,7 +63,7 @@ const updatecampo = async (req: Request, res: Response): Promise<void> => {
 
   try {
     // Obtenemos el campo actual por su ID
-    const campoActual = await campoRepository.getCampo(campoId, clienteId);
+    const campoActual = await campoRepository.getCampo(campoId);
 
     if (!campoActual) {
       res.status(404).json({ message: "campo no encontrado" });
