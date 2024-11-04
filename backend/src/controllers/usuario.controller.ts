@@ -118,7 +118,10 @@ export const loginUser = async (req: Request, res: Response) => {
       usuarioId: user.usuarioId,
       usuarioNombre: name,
     },
-    process.env.SECRET_KEY || 'moli123'
+    process.env.SECRET_KEY || 'moli123',
+    {
+      expiresIn: 1800, 
+    }
   );
   console.log(user.usuarioId);
   res.json(token);

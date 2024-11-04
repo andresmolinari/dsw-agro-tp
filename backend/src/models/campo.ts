@@ -26,7 +26,7 @@ export class Campo extends Model<CampoAttributes> implements CampoAttributes {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: {
-            model: 'Clientes', // Debe coincidir con el nombre de la tabla en la base de datos
+            model: 'Clientes', 
             key: 'clienteId',
           },
           onUpdate: 'CASCADE',

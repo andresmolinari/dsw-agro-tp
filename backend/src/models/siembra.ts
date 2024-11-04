@@ -5,6 +5,11 @@ import sequelize from '../db/connection'; // importa tu instancia de Sequelize
 export class Siembra extends Model {}
 
 Siembra.init({
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   variedad: {
     type: DataTypes.STRING,
     allowNull: false

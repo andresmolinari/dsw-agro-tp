@@ -11,7 +11,7 @@ export const getUserFromToken = (token: string): JwtPayload | null => {
       process.env.SECRET_KEY!
     ) as JwtPayload;
     console.log('Token decodificado:', decoded);
-    // Buscamos el usuario en la base de datos (o desde el ORM o cualquier otro servicio)
+    // Buscamos el usuario en la base de datos 
     //  const user = users.find(user => user.id === decoded.id);
     // Validamos si el usuario existe en la base de datos
     // const user: any = await usuarioRepository.getUsuario(decoded.);
