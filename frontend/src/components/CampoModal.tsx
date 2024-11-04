@@ -6,8 +6,8 @@ import {
   TextField,
   Button,
   Snackbar,
-  Alert,
 } from '@mui/material';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 interface CampoModalProps {
   open: boolean;
@@ -15,6 +15,13 @@ interface CampoModalProps {
   onSave: (campoData: { campoNombre: string; campoUbicacion: string }) => void;
   clienteId: number;
 }
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
+});
 
 const CampoModal: React.FC<CampoModalProps> = ({
   open,
@@ -26,6 +33,7 @@ const CampoModal: React.FC<CampoModalProps> = ({
   const [campoUbicacion, setCampoUbicacion] = useState<string>('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [mensaje, setMensaje] = useState('');
+  const [severity, setSeverity] = useState<'success' | 'error'>('success');
 
   const handleSave = async () => {
     try {
@@ -45,15 +53,18 @@ const CampoModal: React.FC<CampoModalProps> = ({
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error al crear el campo:', errorData);
+        setSeverity('error');
         throw new Error(errorData.message || 'Error al crear el campo');
       }
 
       const nuevoCampo = await response.json();
       onSave(nuevoCampo);
       setMensaje('Campo agregado exitosamente');
+      setSeverity('success');
     } catch (error) {
       console.error('Error en la solicitud:', error);
       setMensaje('Error al crear el campo');
+      setSeverity('error');
     } finally {
       setOpenSnackbar(true);
       setCampoNombre('');
@@ -62,64 +73,61 @@ const CampoModal: React.FC<CampoModalProps> = ({
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   return (
     <Modal open={open} onClose={handleClose}>
-      <>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}
+      >
+        <Typography variant='h6' component='h2'>
+          Agregar Campo
+        </Typography>
+        <TextField
+          fullWidth
+          margin='normal'
+          label='Nombre'
+          value={campoNombre}
+          onChange={(e) => setCampoNombre(e.target.value)}
+        />
+        <TextField
+          fullWidth
+          margin='normal'
+          label='Ubicación'
+          value={campoUbicacion}
+          onChange={(e) => setCampoUbicacion(e.target.value)}
+        />
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={handleSave}
+          sx={{ mt: 2 }}
         >
-          <Typography variant='h6' component='h2'>
-            Agregar Campo
-          </Typography>
-          <TextField
-            fullWidth
-            margin='normal'
-            label='Nombre'
-            value={campoNombre}
-            onChange={(e) => setCampoNombre(e.target.value)}
-          />
-          <TextField
-            fullWidth
-            margin='normal'
-            label='Ubicación'
-            value={campoUbicacion}
-            onChange={(e) => setCampoUbicacion(e.target.value)}
-          />
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={handleSave}
-            sx={{ mt: 2 }}
-          >
-            Guardar
-          </Button>
-        </Box>
+          Guardar
+        </Button>
 
-        {/* Snackbar para mostrar el mensaje */}
         <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}
-          onClose={() => setOpenSnackbar(false)}
+          onClose={handleCloseSnackbar}
         >
-          <Alert
-            onClose={() => setOpenSnackbar(false)}
-            severity={mensaje.includes('Error') ? 'error' : 'success'}
-            sx={{ width: '100%' }}
-          >
+          <Alert onClose={handleCloseSnackbar} severity={severity}>
             {mensaje}
           </Alert>
         </Snackbar>
-      </>
+      </Box>
     </Modal>
   );
 };

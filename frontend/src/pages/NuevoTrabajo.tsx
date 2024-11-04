@@ -14,6 +14,7 @@ import { Cliente } from '../types/Cliente';
 import { Campo } from '../types/Campo';
 import { Lote } from '../types/Lote';
 import CampoModal from '../components/CampoModal';
+import LoteModal from '../components/LoteModal';
 
 interface DetalleTrabajo {
   rendimiento?: number;
@@ -42,11 +43,14 @@ const MisTrabajos: React.FC = () => {
   const [detalle, setDetalle] = useState<DetalleTrabajo>({});
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [openCampoModal, setOpenCampoModal] = useState<boolean>(false);
+  const [openLoteModal, setOpenLoteModal] = useState<boolean>(false);
   const [mensaje, setMensaje] = useState<string>('');
   const [importe, setImporte] = useState<number>(0);
 
   const handleOpenCampoModal = () => setOpenCampoModal(true);
   const handleCloseCampoModal = () => setOpenCampoModal(false);
+  const handleOpenLoteModal = () => setOpenLoteModal(true);
+  const handleCloseLoteModal = () => setOpenLoteModal(false);
   useEffect(() => {
     const fetchClientes = async () => {
       try {
@@ -164,7 +168,7 @@ const MisTrabajos: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/ordenTrabajo', {
@@ -191,14 +195,14 @@ const MisTrabajos: React.FC = () => {
       const data = await response.json();
       console.log('Orden de trabajo creada:', data);
       setMensaje('Orden de trabajo creada exitosamente');
-      setOpenSnackbar(true); // Abrir el snackbar
+      setOpenSnackbar(true);
       setTimeout(() => {
-        navigate('/home'); // Redirigir a home después de 2 segundos
-      }, 2000); // Tiempo en milisegundos para el redireccionamiento
+        navigate('/home');
+      }, 2000);
     } catch (error) {
       console.error('Error al crear la orden de trabajo:', error);
       setMensaje('Error al crear la orden de trabajo');
-      setOpenSnackbar(true); // Abrir el snackbar
+      setOpenSnackbar(true);
     }
   };
 
@@ -381,7 +385,14 @@ const MisTrabajos: React.FC = () => {
                   </MenuItem>
                 ))}
               </TextField>
-              <Button> + </Button>
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={handleOpenLoteModal}
+              >
+                {' '}
+                +{' '}
+              </Button>
             </Box>
 
             <TextField
@@ -425,6 +436,12 @@ const MisTrabajos: React.FC = () => {
         open={openCampoModal}
         onSave={handleCloseCampoModal}
         clienteId={parseInt(cliente)}
+      />
+      <LoteModal
+        handleClose={handleCloseLoteModal}
+        open={openLoteModal}
+        onSave={handleCloseLoteModal}
+        campoId={parseInt(campo)}
       />
     </>
   );
