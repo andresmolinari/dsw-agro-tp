@@ -43,7 +43,7 @@ const createLote = async (req: Request, res: Response): Promise<void> => {
     const existeNombre = await loteRepository.getLoteByName(loteNro, campoId);
   
     if (existeNombre && existeNombre.loteNro === loteNro) {
-      res.status(400).json({ message: "Ya existe un lote con ese nombre" });
+      res.status(400).json({ message: "Ya existe ese lote" });
       return;
     }
 

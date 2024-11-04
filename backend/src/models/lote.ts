@@ -26,7 +26,7 @@ export class Lote extends Model<LoteAttributes> implements LoteAttributes {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: {
-            model: 'Campos', // Debe coincidir con el nombre de la tabla en la base de datos
+            model: 'Campos', 
             key: 'campoId',
           },
           onUpdate: 'CASCADE',

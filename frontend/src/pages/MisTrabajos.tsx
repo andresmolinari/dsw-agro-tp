@@ -55,7 +55,6 @@ const OrdenesTrabajoList: React.FC = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
           marginBottom: 2,
         }}
@@ -63,7 +62,11 @@ const OrdenesTrabajoList: React.FC = () => {
         <Typography variant="h6" component="div">
           Mis Trabajos
         </Typography>
-        <FormControl variant="outlined" size="small" sx={{ minWidth: 150 }}>
+        <FormControl
+          variant="outlined"
+          size="small"
+          sx={{ minWidth: 150, ml: 2 }}
+        >
           <InputLabel shrink>Filtrar por Tipo</InputLabel>
           <Select
             value={filterType}

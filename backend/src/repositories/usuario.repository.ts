@@ -33,20 +33,6 @@ const getUsuarioByName = async (
       where: {
         usuarioNombre,
       },
-      // include: [
-      //   {
-      //     model: Cliente,
-      //     attributes: [
-      //       "clienteId",
-      //       "clienteNombre",
-      //       "clienteEmail",
-      //       "clienteTelefono",
-      //       "clienteDireccion",
-      //       "clienteLocalidad",
-      //       "clienteProvincia",
-      //     ],
-      //   },
-      // ],
     });
     return usuario;
   } catch (error) {

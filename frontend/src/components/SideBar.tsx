@@ -77,9 +77,9 @@ const SideBar = () => {
   );
 };
 
-const SyledButton = styled(Button)(({}) => ({
+const SyledButton = styled(Button)(() => ({
   minWidth: '210px',
-  color: 'black',
+  color: 'white',
   [`&.${buttonClasses.root}`]: {
     justifyContent: 'normal',
   },
