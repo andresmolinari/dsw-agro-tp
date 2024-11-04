@@ -5,6 +5,9 @@ import { Siembra } from "../models/siembra";
 import { Fumigacion } from "../models/fumigacion";
 import { DateOnlyDataType, Transaction } from "sequelize";
 import sequelize from "../db/connection"; 
+import { Lote } from "../models/lote";
+import { Campo } from "../models/campo";
+import { Cliente } from "../models/cliente";
 
 const createOrdenTrabajo = async (
   fecha: DateOnlyDataType,
@@ -29,7 +32,7 @@ const createOrdenTrabajo = async (
     );
 
     // creamos el detalle
-    if (tipo === "cosecha") {
+    if (tipo === "Cosecha") {
       await Cosecha.create(
         {
           rendimiento: detalle.rendimiento,
@@ -38,7 +41,7 @@ const createOrdenTrabajo = async (
         },
         { transaction: t }
       );
-    } else if (tipo === "siembra") {
+    } else if (tipo === "Siembra") {
       await Siembra.create(
         {
           variedad: detalle.variedad,
@@ -48,7 +51,7 @@ const createOrdenTrabajo = async (
         },
         { transaction: t }
       );
-    } else if (tipo === "fumigacion") {
+    } else if (tipo === "Fumigacion") {
       await Fumigacion.create(
         {
           producto: detalle.producto,
@@ -70,7 +73,30 @@ const getOrdenesTrabajo = async (
   try {
     return await OrdenTrabajo.findAll({
       where: { usuarioId: usuarioId },
-      include: [Cosecha, Siembra, Fumigacion],
+      include: [
+        Cosecha,
+        Siembra,
+        Fumigacion,
+        {
+          model: Lote,
+          as: 'lote',
+          attributes: ['loteNro'], // Número de lote
+          include: [
+            {
+              model: Campo,
+              as: 'campo',
+              attributes: ['campoNombre'], // Nombre del campo
+              include: [
+                {
+                  model: Cliente,
+                  as: 'cliente',
+                  attributes: ['clienteNombre'], // Nombre del cliente
+                },
+              ],
+            },
+          ],
+        },
+      ],
     });
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);

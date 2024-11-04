@@ -69,4 +69,7 @@ export function defineAssociations() {
     foreignKey: "usuarioId",
     as: "usuario",
   });
+
+  Lote.hasMany(OrdenTrabajo, {  foreignKey: "loteId", as: "ordenesTrabajo" });
+  OrdenTrabajo.belongsTo(Lote, { foreignKey: "loteId", as: "lote" });
 }
