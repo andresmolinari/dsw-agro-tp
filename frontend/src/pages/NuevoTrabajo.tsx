@@ -12,7 +12,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { Cliente } from '../types/Cliente';
 import { Campo } from '../types/Campo';
-import { Lote } from '../types/Lote';
 import CampoModal from '../components/CampoModal';
 import LoteModal, { LoteData } from '../components/LoteModal';
 
@@ -120,21 +119,16 @@ const MisTrabajos: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:3000/api/lotes/${campo}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error('Error al obtener lotes del campo');
       const data = await response.json();
       setLotes(
-        data.lotes.map(
-          (lote: LoteData) =>
-            ({
-              loteId: lote.loteId,
-              loteNro: lote.loteNro,
-              loteHectareas: lote.loteHectareas,
-            } as LoteData)
-        )
+        data.lotes.map((lote: LoteData) => ({
+          loteId: lote.loteId,
+          loteNro: lote.loteNro,
+          loteHectareas: lote.loteHectareas,
+        }))
       );
     } catch (error) {
       console.error('Error al obtener los lotes del campo:', error);
@@ -201,10 +195,10 @@ const MisTrabajos: React.FC = () => {
 
       const data = await response.json();
       setLotes(
-        data.lotes.map((lote: Lote) => ({
-          id: lote.loteId,
-          nombre: lote.loteNro,
-          hectareas: lote.loteHectareas,
+        data.lotes.map((lote: LoteData) => ({
+          loteId: lote.loteId,
+          loteNro: lote.loteNro,
+          loteHectareas: lote.loteHectareas,
         }))
       );
     } catch (error) {
@@ -460,8 +454,8 @@ const MisTrabajos: React.FC = () => {
               <Button
                 variant='contained'
                 color='secondary'
-                onClick={() => console.log(lotes)}
-                // onClick={handleOpenLoteModal}
+                // onClick={() => console.log(lotes)}
+                onClick={handleOpenLoteModal}
               >
                 {' '}
                 A{' '}

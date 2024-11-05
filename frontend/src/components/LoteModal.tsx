@@ -65,7 +65,12 @@ const LoteModal: React.FC<LoteModalProps> = ({
       }
 
       const nuevoLote: LoteData = await response.json();
-      onSave(nuevoLote);
+      onSave({
+        loteId: nuevoLote.loteId,
+        campoId: nuevoLote.campoId,
+        loteNro: nuevoLote.loteNro,
+        loteHectareas: nuevoLote.loteHectareas,
+      });
       setMensaje('Lote agregado exitosamente');
       setSeverity('success');
     } catch (error) {
