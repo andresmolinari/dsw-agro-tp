@@ -9,7 +9,7 @@ interface Props {
 // Paleta de colores y fuentes globales
 export enum ThemePalette {
   BG = '#ffffff',
-  LIME = '#a2c11c',
+  LIME = '#689f38',
   FONT_GLOBAL = 'jetbrains mono, monospace',
   // Alert Styles
   ERROR_MAIN = '#f44336',

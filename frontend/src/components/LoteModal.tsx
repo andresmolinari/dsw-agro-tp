@@ -9,10 +9,17 @@ import {
 } from '@mui/material';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
+export interface LoteData {
+  loteId?: number;
+  campoId: number;
+  loteNro: number;
+  loteHectareas: number;
+}
+
 interface LoteModalProps {
   open: boolean;
   handleClose: () => void;
-  onSave: (loteData: { loteNro: string; loteHectareas: number }) => void;
+  onSave: (loteData: LoteData) => void;
   campoId: number;
 }
 
@@ -57,7 +64,7 @@ const LoteModal: React.FC<LoteModalProps> = ({
         throw new Error(errorData.message || 'Error al crear el lote');
       }
 
-      const nuevoLote = await response.json();
+      const nuevoLote: LoteData = await response.json();
       onSave(nuevoLote);
       setMensaje('Lote agregado exitosamente');
       setSeverity('success');
@@ -119,6 +126,7 @@ const LoteModal: React.FC<LoteModalProps> = ({
           Guardar
         </Button>
 
+        {/* Snackbar para mensajes */}
         <Snackbar
           open={openSnackbar}
           autoHideDuration={6000}

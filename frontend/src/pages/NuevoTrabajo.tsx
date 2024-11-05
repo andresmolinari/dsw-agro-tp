@@ -14,7 +14,7 @@ import { Cliente } from '../types/Cliente';
 import { Campo } from '../types/Campo';
 import { Lote } from '../types/Lote';
 import CampoModal from '../components/CampoModal';
-import LoteModal from '../components/LoteModal';
+import LoteModal, { LoteData } from '../components/LoteModal';
 
 interface DetalleTrabajo {
   rendimiento?: number;
@@ -26,7 +26,7 @@ interface DetalleTrabajo {
 }
 
 const MisTrabajos: React.FC = () => {
-  const navigate = useNavigate(); // Para redirigir
+  const navigate = useNavigate();
   const [fecha, setFecha] = useState<string>('');
   const [tipo, setTipo] = useState<string>('');
   const [cliente, setCliente] = useState<string>('');
@@ -37,9 +37,7 @@ const MisTrabajos: React.FC = () => {
     []
   );
   const [campos, setCampos] = useState<{ id: number; nombre: string }[]>([]);
-  const [lotes, setLotes] = useState<
-    { id: number; nombre: string; hectareas: number }[]
-  >([]);
+  const [lotes, setLotes] = useState<LoteData[]>([]);
   const [detalle, setDetalle] = useState<DetalleTrabajo>({});
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [openCampoModal, setOpenCampoModal] = useState<boolean>(false);
@@ -48,9 +46,15 @@ const MisTrabajos: React.FC = () => {
   const [importe, setImporte] = useState<number>(0);
 
   const handleOpenCampoModal = () => setOpenCampoModal(true);
-  const handleCloseCampoModal = () => setOpenCampoModal(false);
+  const handleCloseCampoModal = () => {
+    setOpenCampoModal(false);
+    fetchCampos();
+  };
   const handleOpenLoteModal = () => setOpenLoteModal(true);
-  const handleCloseLoteModal = () => setOpenLoteModal(false);
+  const handleCloseLoteModal = () => {
+    setOpenLoteModal(false);
+    fetchLotes();
+  };
   useEffect(() => {
     const fetchClientes = async () => {
       try {
@@ -78,6 +82,72 @@ const MisTrabajos: React.FC = () => {
 
     fetchClientes();
   }, []);
+
+  const fetchCampos = async () => {
+    if (!cliente) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3000/api/clientes/${cliente}/campos`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) throw new Error('Error al obtener campos del cliente');
+      const data = await response.json();
+      setCampos(
+        data.campos.map((campo: Campo) => ({
+          id: campo.campoId,
+          nombre: campo.campoNombre,
+        }))
+      );
+    } catch (error) {
+      console.error('Error al obtener los campos del cliente:', error);
+    }
+  };
+  useEffect(() => {
+    fetchCampos();
+  }, []);
+
+  /**
+   *
+   * @description este no anda
+   */
+  const fetchLotes = async () => {
+    if (!campo) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:3000/api/lotes/${campo}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error('Error al obtener lotes del campo');
+      const data = await response.json();
+      setLotes(
+        data.lotes.map(
+          (lote: LoteData) =>
+            ({
+              loteId: lote.loteId,
+              loteNro: lote.loteNro,
+              loteHectareas: lote.loteHectareas,
+            } as LoteData)
+        )
+      );
+    } catch (error) {
+      console.error('Error al obtener los lotes del campo:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLotes();
+  }, [campo]);
+  const handleLoteSave = (nuevoLote: LoteData) => {
+    setLotes((prevLotes) => [...prevLotes, nuevoLote]); // Agrega el nuevo lote a la lista
+    fetchLotes(); // Vuelve a cargar los lotes del backend
+  };
 
   const handleClienteChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -146,9 +216,11 @@ const MisTrabajos: React.FC = () => {
     const loteId = event.target.value;
     setLote(loteId);
 
-    const loteSeleccionado = lotes.find((lote) => lote.id === parseInt(loteId));
+    const loteSeleccionado = lotes.find(
+      (lote) => lote.loteId === parseInt(loteId)
+    );
     if (loteSeleccionado) {
-      setHectareas(loteSeleccionado.hectareas);
+      setHectareas(loteSeleccionado.loteHectareas);
     } else {
       setHectareas('');
     }
@@ -380,18 +452,19 @@ const MisTrabajos: React.FC = () => {
                 disabled={!campo}
               >
                 {lotes.map((lote) => (
-                  <MenuItem key={lote.id} value={lote.id}>
-                    {lote.nombre}
+                  <MenuItem key={lote.loteId} value={lote.loteId}>
+                    {lote.loteNro}
                   </MenuItem>
                 ))}
               </TextField>
               <Button
                 variant='contained'
                 color='secondary'
-                onClick={handleOpenLoteModal}
+                onClick={() => console.log(lotes)}
+                // onClick={handleOpenLoteModal}
               >
                 {' '}
-                +{' '}
+                A{' '}
               </Button>
             </Box>
 
@@ -440,7 +513,7 @@ const MisTrabajos: React.FC = () => {
       <LoteModal
         handleClose={handleCloseLoteModal}
         open={openLoteModal}
-        onSave={handleCloseLoteModal}
+        onSave={handleLoteSave}
         campoId={parseInt(campo)}
       />
     </>

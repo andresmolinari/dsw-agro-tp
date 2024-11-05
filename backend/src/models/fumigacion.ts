@@ -5,6 +5,11 @@ import sequelize from '../db/connection'; // importa tu instancia de Sequelize
 export class Fumigacion extends Model {}
 
 Fumigacion.init({
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   producto: {
     type: DataTypes.STRING,
     allowNull: false
