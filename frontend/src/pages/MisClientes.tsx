@@ -15,9 +15,11 @@ import {
   Stack,
 } from '@mui/material';
 import { Cliente } from '../types/Cliente';
-import { Add, Delete, Edit } from '@mui/icons-material';
+import { Add, Delete, Edit, Visibility } from '@mui/icons-material';
 import NuevoCliente from './NuevoCliente';
 import ActualizarCliente from '../components/ActualizarCliente';
+
+import { useNavigate } from 'react-router-dom';
 
 const MisClientes: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -27,7 +29,7 @@ const MisClientes: React.FC = () => {
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [clienteSeleccionado, setClienteSeleccionado] =
     useState<Cliente | null>(null);
-
+  const navigate = useNavigate();
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
@@ -122,6 +124,9 @@ const MisClientes: React.FC = () => {
   if (error) {
     return <Alert severity='error'>{error}</Alert>;
   }
+  const handleViewCliente = (clienteId: number) => {
+    navigate(`/mis-clientes/${clienteId}`);
+  };
 
   return (
     <TableContainer component={Paper} sx={{ padding: 2 }}>
@@ -193,6 +198,19 @@ const MisClientes: React.FC = () => {
                     }}
                   >
                     <Delete />
+                  </Button>
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    onClick={() => handleViewCliente(cliente.clienteId)}
+                    sx={{
+                      minWidth: '40px',
+                      padding: '8px',
+                      display: 'flex',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Visibility />
                   </Button>
                 </Stack>
               </TableCell>
