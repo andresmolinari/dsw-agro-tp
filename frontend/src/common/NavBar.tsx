@@ -11,7 +11,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { AccountCircle } from '@mui/icons-material'; // Importa el ícono de usuario
+import { AccountCircle } from '@mui/icons-material'; 
 import { useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../types/AppRoutes';
 import { useAuth } from '../context/AuthContext';
@@ -20,7 +20,7 @@ import { jwtDecode } from 'jwt-decode';
 export const NavBar: React.FC = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated, logout } = useAuth(); // Asume que tienes una función `logout` en el contexto
+  const { isAuthenticated, logout } = useAuth(); // Asume que tienes una función logout en el contexto
   const [username, setUsername] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -62,7 +62,11 @@ export const NavBar: React.FC = () => {
     logout();
     localStorage.removeItem('token');
     handleMenuClose();
-    navigate(AppRoutes.HOME);
+    navigate(AppRoutes.HOME); // Redirigir al Home después de logout
+  };
+
+  const handleAgroClick = () => {
+    navigate(AppRoutes.HOME); // Redirigir al Home cuando se hace clic en Agro
   };
 
   return (
@@ -76,7 +80,10 @@ export const NavBar: React.FC = () => {
               alignItems='center'
               width='100%'
             >
-              <Typography>Agro</Typography>
+              {/* Hacer clic en "Agro" redirige al home */}
+              <Typography variant="h6" onClick={handleAgroClick} sx={{ cursor: 'pointer' }}>
+                Agro
+              </Typography>
               <Stack direction='row' spacing={2} alignItems='center'>
                 {isAuthenticated ? (
                   <>
