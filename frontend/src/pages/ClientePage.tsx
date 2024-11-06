@@ -1,13 +1,8 @@
+// ClientePage.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
+import { CircularProgress, Alert, Typography } from '@mui/material';
+import ClienteCard from '../components/ClienteCard';
 
 interface ClienteData {
   clienteId: number;
@@ -84,57 +79,7 @@ const ClientePage: React.FC = () => {
     );
   }
 
-  return (
-    <Card sx={{ maxWidth: 500, margin: 'auto', mt: 4, boxShadow: 3 }}>
-      <CardContent>
-        <Typography variant='h6' color='primary' gutterBottom>
-          Información del Cliente
-        </Typography>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant='body2' color='textSecondary'>
-            Nombre:
-          </Typography>
-          <Typography variant='body1'>{cliente.clienteNombre}</Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant='body2' color='textSecondary'>
-            Email:
-          </Typography>
-          <Typography variant='body1'>{cliente.clienteEmail}</Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant='body2' color='textSecondary'>
-            Teléfono:
-          </Typography>
-          <Typography variant='body1'>{cliente.clienteTelefono}</Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant='body2' color='textSecondary'>
-            Dirección:
-          </Typography>
-          <Typography variant='body1'>{cliente.clienteDireccion}</Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant='body2' color='textSecondary'>
-            Localidad:
-          </Typography>
-          <Typography variant='body1'>{cliente.clienteLocalidad}</Typography>
-        </Box>
-
-        <Box sx={{ mb: 2 }}>
-          <Typography variant='body2' color='textSecondary'>
-            Provincia:
-          </Typography>
-          <Typography variant='body1'>{cliente.clienteProvincia}</Typography>
-        </Box>
-      </CardContent>
-    </Card>
-  );
+  return <ClienteCard cliente={cliente} />;
 };
 
 export default ClientePage;
