@@ -6,4 +6,5 @@ export enum AppRoutes {
   MIS_TRABAJOS = '/mis-trabajos',
   MIS_CLIENTES = '/mis-clientes',
   NUEVO_CLIENTE = '/nuevo-cliente',
+  PROFILE = '/profile',
 }
