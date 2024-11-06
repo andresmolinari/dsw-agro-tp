@@ -1,5 +1,4 @@
-// ClientePage.tsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { CircularProgress, Alert, Typography } from '@mui/material';
 import ClienteCard from '../components/ClienteCard';

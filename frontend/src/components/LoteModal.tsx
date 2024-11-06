@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Snackbar,
-} from '@mui/material';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { Modal, Box, Typography, TextField, Button } from '@mui/material';
+import NotificationService from '../utils/NotificationService';
 
 export interface LoteData {
   loteId?: number;
@@ -23,13 +16,6 @@ interface LoteModalProps {
   campoId: number;
 }
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
-});
-
 const LoteModal: React.FC<LoteModalProps> = ({
   open,
   handleClose,
@@ -38,9 +24,6 @@ const LoteModal: React.FC<LoteModalProps> = ({
 }) => {
   const [loteNro, setLoteNro] = useState<string>('');
   const [loteHectareas, setLoteHectareas] = useState<number>(0);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [mensaje, setMensaje] = useState('');
-  const [severity, setSeverity] = useState<'success' | 'error'>('success');
 
   const handleSave = async () => {
     try {
@@ -60,7 +43,6 @@ const LoteModal: React.FC<LoteModalProps> = ({
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error al crear el lote:', errorData);
-        setSeverity('error');
         throw new Error(errorData.message || 'Error al crear el lote');
       }
 
@@ -71,22 +53,18 @@ const LoteModal: React.FC<LoteModalProps> = ({
         loteNro: nuevoLote.loteNro,
         loteHectareas: nuevoLote.loteHectareas,
       });
-      setMensaje('Lote agregado exitosamente');
-      setSeverity('success');
+
+      NotificationService.info('Lote agregado exitosamente');
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      setMensaje('Error al crear el lote');
-      setSeverity('error');
+      NotificationService.error(
+        error instanceof Error ? error.message : 'Error al crear el lote'
+      );
     } finally {
-      setOpenSnackbar(true);
       setLoteNro('');
       setLoteHectareas(0);
       handleClose();
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
   };
 
   return (
@@ -130,17 +108,6 @@ const LoteModal: React.FC<LoteModalProps> = ({
         >
           Guardar
         </Button>
-
-        {/* Snackbar para mensajes */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert onClose={handleCloseSnackbar} severity={severity}>
-            {mensaje}
-          </Alert>
-        </Snackbar>
       </Box>
     </Modal>
   );
