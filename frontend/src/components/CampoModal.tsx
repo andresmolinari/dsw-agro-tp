@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Snackbar,
-} from '@mui/material';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { Modal, Box, Typography, TextField, Button } from '@mui/material';
+import NotificationService from '../utils/NotificationService';
 
 interface CampoModalProps {
   open: boolean;
@@ -15,13 +8,6 @@ interface CampoModalProps {
   onSave: (campoData: { campoNombre: string; campoUbicacion: string }) => void;
   clienteId: number;
 }
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
-});
 
 const CampoModal: React.FC<CampoModalProps> = ({
   open,
@@ -31,9 +17,6 @@ const CampoModal: React.FC<CampoModalProps> = ({
 }) => {
   const [campoNombre, setCampoNombre] = useState<string>('');
   const [campoUbicacion, setCampoUbicacion] = useState<string>('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [mensaje, setMensaje] = useState('');
-  const [severity, setSeverity] = useState<'success' | 'error'>('success');
 
   const handleSave = async () => {
     try {
@@ -53,28 +36,23 @@ const CampoModal: React.FC<CampoModalProps> = ({
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error al crear el campo:', errorData);
-        setSeverity('error');
         throw new Error(errorData.message || 'Error al crear el campo');
       }
 
       const nuevoCampo = await response.json();
       onSave(nuevoCampo);
-      setMensaje('Campo agregado exitosamente');
-      setSeverity('success');
+
+      NotificationService.info('Campo agregado exitosamente');
     } catch (error) {
       console.error('Error en la solicitud:', error);
-      setMensaje('Error al crear el campo');
-      setSeverity('error');
+      NotificationService.error(
+        error instanceof Error ? error.message : 'Error al crear el campo'
+      );
     } finally {
-      setOpenSnackbar(true);
       setCampoNombre('');
       setCampoUbicacion('');
       handleClose();
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
   };
 
   return (
@@ -117,16 +95,6 @@ const CampoModal: React.FC<CampoModalProps> = ({
         >
           Guardar
         </Button>
-
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <Alert onClose={handleCloseSnackbar} severity={severity}>
-            {mensaje}
-          </Alert>
-        </Snackbar>
       </Box>
     </Modal>
   );

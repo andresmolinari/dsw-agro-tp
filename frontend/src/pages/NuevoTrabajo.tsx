@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  MenuItem,
-  Stack,
-  Snackbar,
-  Alert,
-} from '@mui/material';
+import { Box, Typography, TextField, Button, MenuItem, Stack, Snackbar, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { Cliente } from '../types/Cliente';
-import { Campo } from '../types/Campo';
+
 import CampoModal from '../components/CampoModal';
-import LoteModal, { LoteData } from '../components/LoteModal';
+import LoteModal from '../components/LoteModal';
+import useClientes from '../hooks/useClientes';
+import useCampos from '../hooks/useCampos';
+import useLotes from '../hooks/useLotes';
+import { Lote } from '../types/Lote';
+import LoteService from '../services/LoteService';
+import NotificationService from '../utils/NotificationService';
 
 interface DetalleTrabajo {
   rendimiento?: number;
@@ -28,15 +24,15 @@ const MisTrabajos: React.FC = () => {
   const navigate = useNavigate();
   const [fecha, setFecha] = useState<string>('');
   const [tipo, setTipo] = useState<string>('');
-  const [cliente, setCliente] = useState<string>('');
-  const [campo, setCampo] = useState<string>('');
+  const [clienteId, setClienteId] = useState<string>('');
+  const [campoId, setCampoId] = useState<string>('');
   const [lote, setLote] = useState<string>('');
   const [hectareas, setHectareas] = useState<number | ''>('');
-  const [clientes, setClientes] = useState<{ id: number; nombre: string }[]>(
-    []
-  );
-  const [campos, setCampos] = useState<{ id: number; nombre: string }[]>([]);
-  const [lotes, setLotes] = useState<LoteData[]>([]);
+  // const [clientes, setClientes] = useState<{ id: number; nombre: string }[]>(
+  //   []
+  // );
+  // const [campos, setCampos] = useState<{ id: number; nombre: string }[]>([]);
+  // const [lotes, setLotes] = useState<LoteData[]>([]);
   const [detalle, setDetalle] = useState<DetalleTrabajo>({});
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [openCampoModal, setOpenCampoModal] = useState<boolean>(false);
@@ -45,16 +41,25 @@ const MisTrabajos: React.FC = () => {
   const [importe, setImporte] = useState<number>(0);
 
   const handleOpenCampoModal = () => setOpenCampoModal(true);
+
   const handleCloseCampoModal = () => {
     setOpenCampoModal(false);
-    fetchCampos();
+
+    // fetchCampos(); actualizar el estado de otra forma
   };
+
   const handleOpenLoteModal = () => setOpenLoteModal(true);
+
   const handleCloseLoteModal = () => {
     setOpenLoteModal(false);
-    fetchLotes();
+    // fetchLotes();
   };
-  useEffect(() => {
+
+  const { clientes } = useClientes();
+  const { campos } = useCampos(clienteId);
+  const { lotes, setLotes } = useLotes(campoId);
+
+  /*   useEffect(() => {
     const fetchClientes = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -80,139 +85,103 @@ const MisTrabajos: React.FC = () => {
     };
 
     fetchClientes();
-  }, []);
+  }, []); */
 
-  const fetchCampos = async () => {
-    if (!cliente) return;
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `http://localhost:3000/api/clientes/${cliente}/campos`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error('Error al obtener campos del cliente');
-      const data = await response.json();
-      setCampos(
-        data.campos.map((campo: Campo) => ({
-          id: campo.campoId,
-          nombre: campo.campoNombre,
-        }))
-      );
-    } catch (error) {
-      console.error('Error al obtener los campos del cliente:', error);
-    }
-  };
-  useEffect(() => {
-    fetchCampos();
-  }, []);
+  // const fetchCampos = async () => {
+  //   if (!clienteId) return;
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await fetch(
+  //       `http://localhost:3000/api/clientes/${clienteId}/campos`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     if (!response.ok) throw new Error('Error al obtener campos del cliente');
+  //     const data = await response.json();
+  //     setCampos(
+  //       data.campos.map((campo: Campo) => ({
+  //         id: campo.campoId,
+  //         nombre: campo.campoNombre,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error('Error al obtener los campos del cliente:', error);
+  //   }
+  // };
 
-  /**
-   *
-   * @description este no anda
-   */
-  const fetchLotes = async () => {
-    if (!campo) return;
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/api/lotes/${campo}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error('Error al obtener lotes del campo');
-      const data = await response.json();
-      setLotes(
-        data.lotes.map((lote: LoteData) => ({
-          loteId: lote.loteId,
-          loteNro: lote.loteNro,
-          loteHectareas: lote.loteHectareas,
-        }))
-      );
-    } catch (error) {
-      console.error('Error al obtener los lotes del campo:', error);
-    }
-  };
+  // useEffect(() => {
+  //   fetchCampos();
+  // }, []);
 
-  useEffect(() => {
-    fetchLotes();
-  }, [campo]);
-  const handleLoteSave = (nuevoLote: LoteData) => {
+  // const fetchLotes = async () => {
+  //   if (!campoId) return;
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await fetch(
+  //       `http://localhost:3000/api/lotes/${campoId}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
+  //     if (!response.ok) throw new Error('Error al obtener lotes del campo');
+  //     const data = await response.json();
+  //     setLotes(
+  //       data.lotes.map((lote: LoteData) => ({
+  //         loteId: lote.loteId,
+  //         loteNro: lote.loteNro,
+  //         loteHectareas: lote.loteHectareas,
+  //       }))
+  //     );
+  //   } catch (error) {
+  //     console.error('Error al obtener los lotes del campo:', error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchLotes();
+  // }, [campoId]);
+
+  const handleLoteSave = (nuevoLote: Lote) => {
     setLotes((prevLotes) => [...prevLotes, nuevoLote]); // Agrega el nuevo lote a la lista
-    fetchLotes(); // Vuelve a cargar los lotes del backend
   };
 
-  const handleClienteChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleClienteChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const clienteId = event.target.value;
-    setCliente(clienteId);
+    setClienteId(clienteId);
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `http://localhost:3000/api/clientes/${clienteId}/campos`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error('Error al obtener campos del cliente');
-
-      const data = await response.json();
-      setCampos(
-        data.campos.map((campo: Campo) => ({
-          id: campo.campoId,
-          nombre: campo.campoNombre,
-        }))
-      );
-      setCampo('');
-      setLotes([]);
-    } catch (error) {
-      console.error('Error al obtener los campos del cliente:', error);
-    }
+    setCampoId('');
+    setLotes([]);
   };
 
-  const handleCampoChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleCampoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const campoId = event.target.value;
-    setCampo(campoId);
+    setCampoId(campoId);
+    LoteService.getAllLotesByCampoId(campoId)
+      .then((res) => {
+        setLotes(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        NotificationService.error(`Error al buscar lotes para el campo con el id ${campoId}`);
+      });
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `http://localhost:3000/api/campos/campo/${campoId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error('Error al obtener lotes del campo');
-
-      const data = await response.json();
-      setLotes(
-        data.lotes.map((lote: LoteData) => ({
-          loteId: lote.loteId,
-          loteNro: lote.loteNro,
-          loteHectareas: lote.loteHectareas,
-        }))
-      );
-    } catch (error) {
-      console.error('Error al obtener los lotes del campo:', error);
-    }
+    // setLotes(
+    //   data.lotes.map((lote: LoteData) => ({
+    //     loteId: lote.loteId,
+    //     loteNro: lote.loteNro,
+    //     loteHectareas: lote.loteHectareas,
+    //   }))
+    // );
   };
 
   const handleLoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const loteId = event.target.value;
     setLote(loteId);
 
-    const loteSeleccionado = lotes.find(
-      (lote) => lote.loteId === parseInt(loteId)
-    );
+    const loteSeleccionado = lotes.find((lote) => lote.loteId === parseInt(loteId));
     if (loteSeleccionado) {
       setHectareas(loteSeleccionado.loteHectareas);
     } else {
@@ -236,6 +205,7 @@ const MisTrabajos: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      //mover esto a un service
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/ordenTrabajo', {
         method: 'POST',
@@ -247,7 +217,7 @@ const MisTrabajos: React.FC = () => {
           fecha,
           tipo,
           loteId: lote,
-          campoId: campo,
+          campoId: campoId,
           detalle,
         }),
       });
@@ -299,13 +269,7 @@ const MisTrabajos: React.FC = () => {
                 shrink: true,
               }}
             />
-            <TextField
-              select
-              label='Tipo'
-              fullWidth
-              value={tipo}
-              onChange={handleTipoChange}
-            >
+            <TextField select label='Tipo' fullWidth value={tipo} onChange={handleTipoChange}>
               <MenuItem value='Cosecha'>Cosecha</MenuItem>
               <MenuItem value='Fumigacion'>Fumigación</MenuItem>
               <MenuItem value='Siembra'>Siembra</MenuItem>
@@ -330,9 +294,7 @@ const MisTrabajos: React.FC = () => {
                   type='number'
                   fullWidth
                   value={detalle.precio || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, precio: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, precio: Number(e.target.value) })}
                 />
               </>
             )}
@@ -343,27 +305,21 @@ const MisTrabajos: React.FC = () => {
                   label='Variedad'
                   fullWidth
                   value={detalle.variedad || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, variedad: e.target.value })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, variedad: e.target.value })}
                 />
                 <TextField
                   label='Kilos'
                   type='number'
                   fullWidth
                   value={detalle.kilos || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, kilos: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, kilos: Number(e.target.value) })}
                 />
                 <TextField
                   label='Precio'
                   type='number'
                   fullWidth
                   value={detalle.precio || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, precio: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, precio: Number(e.target.value) })}
                 />
               </>
             )}
@@ -374,78 +330,48 @@ const MisTrabajos: React.FC = () => {
                   label='Producto'
                   fullWidth
                   value={detalle.producto || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, producto: e.target.value })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, producto: e.target.value })}
                 />
                 <TextField
                   label='Dosis'
                   type='number'
                   fullWidth
                   value={detalle.dosis || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, dosis: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, dosis: Number(e.target.value) })}
                 />
                 <TextField
                   label='Precio'
                   type='number'
                   fullWidth
                   value={detalle.precio || ''}
-                  onChange={(e) =>
-                    setDetalle({ ...detalle, precio: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDetalle({ ...detalle, precio: Number(e.target.value) })}
                 />
               </>
             )}
 
-            <TextField
-              select
-              label='Cliente'
-              fullWidth
-              value={cliente}
-              onChange={handleClienteChange}
-            >
+            <TextField select label='Cliente' fullWidth value={clienteId} onChange={handleClienteChange}>
               {clientes.map((cliente) => (
-                <MenuItem key={cliente.id} value={cliente.id}>
-                  {cliente.nombre}
+                <MenuItem key={cliente.clienteId} value={cliente.clienteId}>
+                  {cliente.clienteNombre}
                 </MenuItem>
               ))}
             </TextField>
             <Box sx={{ display: 'flex', columnGap: '8px' }}>
-              <TextField
-                select
-                label='Campo'
-                fullWidth
-                value={campo}
-                onChange={handleCampoChange}
-                disabled={!cliente}
-              >
+              <TextField select label='Campo' fullWidth value={campoId} onChange={handleCampoChange} disabled={!clienteId}>
                 {campos.map((campo) => (
-                  <MenuItem key={campo.id} value={campo.id}>
-                    {campo.nombre}
+                  <MenuItem key={campo.campoId} value={campo.campoId}>
+                    {campo.campoNombre}
                   </MenuItem>
                 ))}
               </TextField>
-              <Button
-                variant='contained'
-                color='secondary'
-                onClick={handleOpenCampoModal}
-              >
+              <Button variant='contained' color='secondary' onClick={handleOpenCampoModal}>
                 {' '}
                 +{' '}
               </Button>
             </Box>
             <Box sx={{ display: 'flex', columnGap: '8px' }}>
-              <TextField
-                select
-                label='Lote'
-                fullWidth
-                value={lote}
-                onChange={handleLoteChange}
-                disabled={!campo}
-              >
-                {lotes.map((lote) => (
+              <TextField select label='Lote' fullWidth value={lote} onChange={handleLoteChange} disabled={!campoId}>
+                {lotes?.map((lote) => (
                   <MenuItem key={lote.loteId} value={lote.loteId}>
                     {lote.loteNro}
                   </MenuItem>
@@ -462,21 +388,9 @@ const MisTrabajos: React.FC = () => {
               </Button>
             </Box>
 
-            <TextField
-              label='Hectareas'
-              type='number'
-              fullWidth
-              value={hectareas}
-              disabled
-            />
+            <TextField label='Hectareas' type='number' fullWidth value={hectareas} disabled />
 
-            <TextField
-              label='Importe'
-              type='number'
-              fullWidth
-              value={importe}
-              disabled
-            />
+            <TextField label='Importe' type='number' fullWidth value={importe} disabled />
 
             <Button variant='contained' color='primary' type='submit'>
               Guardar Trabajo
@@ -484,16 +398,8 @@ const MisTrabajos: React.FC = () => {
           </Stack>
         </form>
 
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={() => setOpenSnackbar(false)}
-        >
-          <Alert
-            onClose={() => setOpenSnackbar(false)}
-            severity={mensaje.includes('Error') ? 'error' : 'success'}
-            sx={{ width: '100%' }}
-          >
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+          <Alert onClose={() => setOpenSnackbar(false)} severity={mensaje.includes('Error') ? 'error' : 'success'} sx={{ width: '100%' }}>
             {mensaje}
           </Alert>
         </Snackbar>
@@ -502,14 +408,9 @@ const MisTrabajos: React.FC = () => {
         handleClose={handleCloseCampoModal}
         open={openCampoModal}
         onSave={handleCloseCampoModal}
-        clienteId={parseInt(cliente)}
+        clienteId={parseInt(clienteId)}
       />
-      <LoteModal
-        handleClose={handleCloseLoteModal}
-        open={openLoteModal}
-        onSave={handleLoteSave}
-        campoId={parseInt(campo)}
-      />
+      <LoteModal handleClose={handleCloseLoteModal} open={openLoteModal} onSave={handleLoteSave} campoId={parseInt(campoId)} />
     </>
   );
 };

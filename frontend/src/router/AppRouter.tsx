@@ -7,6 +7,7 @@ import { AppRoutes } from '../types/AppRoutes';
 import MisClientes from '../pages/MisClientes';
 import MisTrabajos from '../pages/MisTrabajos';
 import NuevoTrabajo from '../pages/NuevoTrabajo';
+import ClientePage from '../pages/ClientePage';
 import UserProfile from '../pages/UserProfile';
 import { GuestHome } from '../pages/GuestHome';
 
@@ -16,6 +17,10 @@ export const AppRouter = () => {
       <Route path='/app' element={<AppLayout />}>
         <Route path={AppRoutes.HOME} element={<HomePage />} />
         <Route path={AppRoutes.MIS_CLIENTES} element={<MisClientes />} />
+        <Route
+          path={`${AppRoutes.MIS_CLIENTES}/:clienteId`}
+          element={<ClientePage />}
+        />
         <Route path={AppRoutes.MIS_TRABAJOS} element={<MisTrabajos />} />
         <Route path={AppRoutes.NUEVO_TRABAJO} element={<NuevoTrabajo />} />
         <Route path={AppRoutes.PROFILE} element={<UserProfile />} />
