@@ -8,7 +8,7 @@ const useClientes = () => {
   useEffect(() => {
     const fetchClientes = async () => {
       const response = await ClienteService.getAllClientes();
-      console.log(clientes);
+
       setClientes(response.data);
     };
     fetchClientes();
