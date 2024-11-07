@@ -9,11 +9,12 @@ import MisTrabajos from '../pages/MisTrabajos';
 import NuevoTrabajo from '../pages/NuevoTrabajo';
 import ClientePage from '../pages/ClientePage';
 import UserProfile from '../pages/UserProfile';
+import { GuestHome } from '../pages/GuestHome';
 
 export const AppRouter = () => {
   return (
     <Routes>
-      <Route path='/' element={<AppLayout />}>
+      <Route path='/app' element={<AppLayout />}>
         <Route path={AppRoutes.HOME} element={<HomePage />} />
         <Route path={AppRoutes.MIS_CLIENTES} element={<MisClientes />} />
         <Route
@@ -26,6 +27,9 @@ export const AppRouter = () => {
       </Route>
       <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
       <Route path={AppRoutes.REGISTER} element={<Register />} />
+      <Route path='/' element={<AppLayout />}>
+      <Route path={AppRoutes.GUEST_HOME} element={<GuestHome />} />
+      </Route>
       <Route path='*' element={<Navigate to='/' />} />
     </Routes>
   );
