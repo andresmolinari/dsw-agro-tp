@@ -8,6 +8,7 @@ import MisClientes from '../pages/MisClientes';
 import MisTrabajos from '../pages/MisTrabajos';
 import NuevoTrabajo from '../pages/NuevoTrabajo';
 import ClientePage from '../pages/ClientePage';
+import UserProfile from '../pages/UserProfile';
 
 export const AppRouter = () => {
   return (
@@ -21,6 +22,7 @@ export const AppRouter = () => {
         />
         <Route path={AppRoutes.MIS_TRABAJOS} element={<MisTrabajos />} />
         <Route path={AppRoutes.NUEVO_TRABAJO} element={<NuevoTrabajo />} />
+        <Route path={AppRoutes.PROFILE} element={<UserProfile />} />
       </Route>
       <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
       <Route path={AppRoutes.REGISTER} element={<Register />} />

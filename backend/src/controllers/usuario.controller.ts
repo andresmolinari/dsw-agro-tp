@@ -130,7 +130,7 @@ export const loginUser = async (req: Request, res: Response) => {
 // modificar usuario
 const updateUsuario = async (req: Request, res: Response): Promise<void> => {
   const { usuarioId } = req.params;
-  const { usuarioNombre, usuarioContraseña } = req.body;
+  const { usuarioEmail, usuarioContraseña } = req.body;
 
   const hashedPassword = await bcrypt.hash(usuarioContraseña, 10);
   try {
@@ -145,15 +145,15 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Si el nombre ha cambiado, validamos que no exista otro usuario con el mismo nombre
-    if (usuarioActual && usuarioNombre !== usuarioActual.usuarioNombre) {
-      const existeNombre = await usuarioRepository.getUsuarioByName(
-        usuarioNombre
+    if (usuarioActual && usuarioEmail !== usuarioActual.usuarioEmail) {
+      const existeEmail = await usuarioRepository.getUsuarioByEmail(
+        usuarioEmail
       );
 
-      if (existeNombre) {
+      if (existeEmail) {
         res
           .status(400)
-          .json({ message: 'Ya existe un usuario con ese nombre' });
+          .json({ message: 'Ya existe un usuario con ese email' });
         return;
       }
     }
@@ -162,7 +162,7 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     const updatedUsuario = await usuarioRepository.updateUsuario(
       parseInt(usuarioId),
       {
-        usuarioNombre: usuarioNombre || usuarioActual.usuarioNombre, // Si no se envía un nuevo nombre, mantenemos el nombre actual
+        usuarioEmail: usuarioEmail || usuarioActual.usuarioEmail, // Si no se envía un nuevo nombre, mantenemos el nombre actual
         usuarioContraseña: hashedPassword || usuarioActual.usuarioContraseña,
       }
     );

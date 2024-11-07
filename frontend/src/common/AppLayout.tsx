@@ -3,6 +3,7 @@ import SideBar from '../components/SideBar';
 import { NavBar } from './NavBar';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 
 export const AppLayout: React.FC<{}> = () => {
   const { isAuthenticated } = useAuth();
@@ -31,6 +32,7 @@ export const AppLayout: React.FC<{}> = () => {
           <Outlet />
         </div>
       </Box>
+      <Footer />
     </div>
   );
 };

@@ -80,17 +80,17 @@ const getOrdenesTrabajo = async (
         {
           model: Lote,
           as: 'lote',
-          attributes: ['loteNro'], // Número de lote
+          attributes: ['loteNro'], 
           include: [
             {
               model: Campo,
               as: 'campo',
-              attributes: ['campoNombre'], // Nombre del campo
+              attributes: ['campoNombre'], 
               include: [
                 {
                   model: Cliente,
                   as: 'cliente',
-                  attributes: ['clienteNombre'], // Nombre del cliente
+                  attributes: ['clienteNombre'], 
                 },
               ],
             },
