@@ -29,6 +29,8 @@ OrdenTrabajo.init(
         model: "Lotes",
         key: "loteId",
       },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     },
     usuarioId: {
       type: DataTypes.INTEGER,
