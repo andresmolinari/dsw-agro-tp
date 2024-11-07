@@ -125,7 +125,7 @@ const MisClientes: React.FC = () => {
     return <Alert severity='error'>{error}</Alert>;
   }
   const handleViewCliente = (clienteId: number) => {
-    navigate(`/mis-clientes/${clienteId}`);
+    navigate(`/app/mis-clientes/${clienteId}`);
   };
 
   return (

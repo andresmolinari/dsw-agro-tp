@@ -30,7 +30,7 @@ export const AppRouter = () => {
       <Route path='/' element={<AppLayout />}>
       <Route path={AppRoutes.GUEST_HOME} element={<GuestHome />} />
       </Route>
-      <Route path='*' element={<Navigate to='/' />} />
+      <Route path='*' element={<Navigate to='/app' />} />
     </Routes>
   );
 };

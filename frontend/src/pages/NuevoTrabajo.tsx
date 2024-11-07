@@ -233,7 +233,7 @@ const MisTrabajos: React.FC = () => {
       setMensaje('Orden de trabajo creada exitosamente');
       setOpenSnackbar(true);
       setTimeout(() => {
-        navigate('/home');
+        navigate('/app/home');
       }, 2000);
     } catch (error) {
       console.error('Error al crear la orden de trabajo:', error);
