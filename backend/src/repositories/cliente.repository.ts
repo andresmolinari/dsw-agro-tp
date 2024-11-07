@@ -1,5 +1,6 @@
 import { Campo } from "../models/campo";
 import { Cliente, ClienteAttributes } from "../models/cliente";
+import { Lote } from "../models/lote";
 
 //obtener todos los clientes
 const getClientes = async (usuarioId: number): Promise<Cliente[]> => {
@@ -32,6 +33,18 @@ const getCliente = async (clienteId: number, usuarioId: number): Promise<Cliente
         clienteId: clienteId,
         usuarioId: usuarioId,
       },
+      include: [
+        {
+          model: Campo,
+          as: 'campos', // This corresponds to the alias in the association
+          include: [
+            {
+              model: Lote,
+              as: 'lotes', // This corresponds to the alias in the association
+            }
+          ]
+        }
+      ]
     });
     return cliente;
   } catch (error) {
@@ -39,6 +52,7 @@ const getCliente = async (clienteId: number, usuarioId: number): Promise<Cliente
     throw error;
   }
 };
+
 
 const getClienteCampos = async (clienteId: number, usuarioId: number): Promise<Cliente | null> => {
   try {
