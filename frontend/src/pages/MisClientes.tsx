@@ -27,8 +27,7 @@ const MisClientes: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [clienteSeleccionado, setClienteSeleccionado] =
-    useState<Cliente | null>(null);
+  const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
   const navigate = useNavigate();
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -41,17 +40,14 @@ const MisClientes: React.FC = () => {
   const handleUpdateCliente = (updatedCliente: Cliente) => {
     (async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/clientes/${updatedCliente.clienteId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(updatedCliente),
-          }
-        );
+        const response = await fetch(`http://localhost:3000/api/clientes/${updatedCliente.clienteId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(updatedCliente),
+        });
         if (!response.ok) {
           throw new Error('Error al actualizar el cliente');
         }
@@ -68,14 +64,11 @@ const MisClientes: React.FC = () => {
   const fetchClientes = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'http://localhost:3000/api/clientes/misClientes',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
+      const response = await fetch('http://localhost:3000/api/clientes/misClientes', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
       if (!response.ok) {
         throw new Error('Error al obtener los clientes');
       }
@@ -92,15 +85,12 @@ const MisClientes: React.FC = () => {
   const handleDelete = async (clienteId: number) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/clientes/${clienteId}`,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
+        const response = await fetch(`http://localhost:3000/api/clientes/${clienteId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
         if (!response.ok) {
           throw new Error('Error al eliminar el cliente');
         }
@@ -125,7 +115,7 @@ const MisClientes: React.FC = () => {
     return <Alert severity='error'>{error}</Alert>;
   }
   const handleViewCliente = (clienteId: number) => {
-    navigate(`/mis-clientes/${clienteId}`);
+    navigate(`/app/mis-clientes/${clienteId}`);
   };
 
   return (
@@ -141,12 +131,7 @@ const MisClientes: React.FC = () => {
         <Typography variant='h6' component='div'>
           Lista de Clientes
         </Typography>
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={handleOpenModal}
-          sx={{ marginRight: 2 }}
-        >
+        <Button variant='contained' color='primary' onClick={handleOpenModal} sx={{ marginRight: 2 }}>
           Cliente <Add />
         </Button>
       </Box>
@@ -218,11 +203,7 @@ const MisClientes: React.FC = () => {
           ))}
         </TableBody>
       </Table>
-      <NuevoCliente
-        open={openModal}
-        onClose={handleCloseModal}
-        onClienteCreado={fetchClientes}
-      />
+      <NuevoCliente open={openModal} onClose={handleCloseModal} onClienteCreado={fetchClientes} />
       <ActualizarCliente
         cliente={clienteSeleccionado}
         open={openEditModal}
