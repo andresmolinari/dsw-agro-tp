@@ -25,7 +25,7 @@ const App: React.FC = () => {
         } else {
           // Token valido
           login();
-        }
+        }                                                        // TODO: arreglar condicion
       } catch (error) {
         // Token invalido
         localStorage.removeItem('token');
@@ -40,7 +40,7 @@ const App: React.FC = () => {
         currentPath !== AppRoutes.LOGIN
       ) {
         navigate('/');
-        NotificationService.error('Token no encontrado');
+        // NotificationService.error('Token no encontrado');
       }
     }
   }, [login, logout, navigate]);
