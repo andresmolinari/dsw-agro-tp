@@ -19,6 +19,7 @@ class ClienteService {
   getAllCamposByClienteId(clienteId: string): Promise<AxiosResponse<Campo[]>> {
     return HttpClient.get<Campo[]>(`${this.path}/${clienteId}/campos`);
   }
+
   createCliente(nuevoCliente: Partial<Cliente>): Promise<AxiosResponse<Cliente>> {
     return HttpClient.post<Cliente>(`${this.path}`, nuevoCliente);
   }
