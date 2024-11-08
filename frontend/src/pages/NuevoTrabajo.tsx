@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, MenuItem, Stack, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, TextField, Button, MenuItem, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import CampoModal from '../components/CampoModal';
@@ -10,6 +10,8 @@ import useLotes from '../hooks/useLotes';
 import { Lote } from '../types/Lote';
 import LoteService from '../services/LoteService';
 import NotificationService from '../utils/NotificationService';
+import { Campo } from '../types/Campo';
+import OrdenTrabajoService from '../services/OrdenTrabajoService';
 
 interface DetalleTrabajo {
   rendimiento?: number;
@@ -31,122 +33,46 @@ const MisTrabajos: React.FC = () => {
   // const [clientes, setClientes] = useState<{ id: number; nombre: string }[]>(
   //   []
   // );
-  // const [campos, setCampos] = useState<{ id: number; nombre: string }[]>([]);
-  // const [lotes, setLotes] = useState<LoteData[]>([]);
+  // const [campos, setCampos] = useState<Campo[]>([]);
+
   const [detalle, setDetalle] = useState<DetalleTrabajo>({});
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
   const [openCampoModal, setOpenCampoModal] = useState<boolean>(false);
   const [openLoteModal, setOpenLoteModal] = useState<boolean>(false);
-  const [mensaje, setMensaje] = useState<string>('');
+  // const [mensaje, setMensaje] = useState<string>('');
   const [importe, setImporte] = useState<number>(0);
 
   const handleOpenCampoModal = () => setOpenCampoModal(true);
 
   const handleCloseCampoModal = () => {
     setOpenCampoModal(false);
+  };
 
-    // fetchCampos(); actualizar el estado de otra forma
+  const handleCampoSave = (campoData: { campoNombre: string; campoUbicacion: string }) => {
+    // Solucion temporal para agregar un campo a la lista
+    const nuevoCampo: Campo = {
+      campoId: Math.random(),
+      clienteId: parseInt(clienteId),
+      campoNombre: campoData.campoNombre,
+      campoUbicacion: campoData.campoUbicacion,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      cliente: {} as any,
+    };
+    setCampos((prevCampos) => [...prevCampos, nuevoCampo]);
+    NotificationService.info('Campo agregado exitosamente');
+    handleCloseCampoModal();
+  };
+  const handleLoteSave = (nuevoLote: Lote) => {
+    setLotes((prevLotes) => [...prevLotes, nuevoLote]); // Agrega el nuevo lote a la lista
+    NotificationService.info('Lote agregado exitosamente');
   };
 
   const handleOpenLoteModal = () => setOpenLoteModal(true);
-
-  const handleCloseLoteModal = () => {
-    setOpenLoteModal(false);
-    // fetchLotes();
-  };
+  const handleCloseLoteModal = () => setOpenLoteModal(false);
 
   const { clientes } = useClientes();
-  const { campos } = useCampos(clienteId);
+  const { campos, setCampos } = useCampos(clienteId);
   const { lotes, setLotes } = useLotes(campoId);
-
-  /*   useEffect(() => {
-    const fetchClientes = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(
-          'http://localhost:3000/api/clientes/misClientes',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) throw new Error('Error al obtener clientes');
-        const data: Cliente[] = await response.json();
-        setClientes(
-          data.map((cliente) => ({
-            id: cliente.clienteId,
-            nombre: cliente.clienteNombre,
-          }))
-        );
-      } catch (error) {
-        console.error('Error al obtener los clientes:', error);
-      }
-    };
-
-    fetchClientes();
-  }, []); */
-
-  // const fetchCampos = async () => {
-  //   if (!clienteId) return;
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const response = await fetch(
-  //       `http://localhost:3000/api/clientes/${clienteId}/campos`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     if (!response.ok) throw new Error('Error al obtener campos del cliente');
-  //     const data = await response.json();
-  //     setCampos(
-  //       data.campos.map((campo: Campo) => ({
-  //         id: campo.campoId,
-  //         nombre: campo.campoNombre,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error('Error al obtener los campos del cliente:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchCampos();
-  // }, []);
-
-  // const fetchLotes = async () => {
-  //   if (!campoId) return;
-  //   try {
-  //     const token = localStorage.getItem('token');
-  //     const response = await fetch(
-  //       `http://localhost:3000/api/lotes/${campoId}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-  //     if (!response.ok) throw new Error('Error al obtener lotes del campo');
-  //     const data = await response.json();
-  //     setLotes(
-  //       data.lotes.map((lote: LoteData) => ({
-  //         loteId: lote.loteId,
-  //         loteNro: lote.loteNro,
-  //         loteHectareas: lote.loteHectareas,
-  //       }))
-  //     );
-  //   } catch (error) {
-  //     console.error('Error al obtener los lotes del campo:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchLotes();
-  // }, [campoId]);
-
-  const handleLoteSave = (nuevoLote: Lote) => {
-    setLotes((prevLotes) => [...prevLotes, nuevoLote]); // Agrega el nuevo lote a la lista
-  };
 
   const handleClienteChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const clienteId = event.target.value;
@@ -167,14 +93,6 @@ const MisTrabajos: React.FC = () => {
         console.log(e);
         NotificationService.error(`Error al buscar lotes para el campo con el id ${campoId}`);
       });
-
-    // setLotes(
-    //   data.lotes.map((lote: LoteData) => ({
-    //     loteId: lote.loteId,
-    //     loteNro: lote.loteNro,
-    //     loteHectareas: lote.loteHectareas,
-    //   }))
-    // );
   };
 
   const handleLoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,40 +123,23 @@ const MisTrabajos: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      //mover esto a un service
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/ordenTrabajo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fecha,
-          tipo,
-          loteId: lote,
-          campoId: campoId,
-          detalle,
-        }),
-      });
+      const ordenData = {
+        fecha,
+        tipo,
+        loteId: lote,
+        campoId,
+        detalle,
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error de respuesta:', errorData);
-        throw new Error('Error al crear la orden de trabajo');
-      }
-
-      const data = await response.json();
-      console.log('Orden de trabajo creada:', data);
-      setMensaje('Orden de trabajo creada exitosamente');
-      setOpenSnackbar(true);
+      const response = await OrdenTrabajoService.createOrdenTrabajo(ordenData);
+      console.log('Response data:', response.data); //temporal para ver la respuesta
+      NotificationService.info('Orden de trabajo creada exitosamente');
       setTimeout(() => {
         navigate('/app/home');
       }, 2000);
     } catch (error) {
       console.error('Error al crear la orden de trabajo:', error);
-      setMensaje('Error al crear la orden de trabajo');
-      setOpenSnackbar(true);
+      NotificationService.error('Error al crear la orden de trabajo');
     }
   };
 
@@ -397,19 +298,8 @@ const MisTrabajos: React.FC = () => {
             </Button>
           </Stack>
         </form>
-
-        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
-          <Alert onClose={() => setOpenSnackbar(false)} severity={mensaje.includes('Error') ? 'error' : 'success'} sx={{ width: '100%' }}>
-            {mensaje}
-          </Alert>
-        </Snackbar>
       </Box>
-      <CampoModal
-        handleClose={handleCloseCampoModal}
-        open={openCampoModal}
-        onSave={handleCloseCampoModal}
-        clienteId={parseInt(clienteId)}
-      />
+      <CampoModal handleClose={handleCloseCampoModal} open={openCampoModal} onSave={handleCampoSave} clienteId={parseInt(clienteId)} />
       <LoteModal handleClose={handleCloseLoteModal} open={openLoteModal} onSave={handleLoteSave} campoId={parseInt(campoId)} />
     </>
   );

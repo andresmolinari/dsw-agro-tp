@@ -8,26 +8,31 @@ const useCampos = (clienteId: string) => {
   useEffect(() => {
     const fetchCampos = async () => {
       if (!clienteId) return;
-      const response = await ClienteService.getAllCamposByClienteId(clienteId);
+      try {
+        const response = await ClienteService.getAllCamposByClienteId(clienteId);
+        console.log(response);
+        // Agregar manejo de errores
 
-      console.log(response);
-      // response.status usar esto para ver los errores
-
-      /* 
-      esto esta devolviendo un objeto  
+        /* 
+      
+        esto esta devolviendo un objeto  
 
         {  datadelcliente , campos:Campo[] }
       
       
       */
-      //@ts-expect-error
-      setCampos(response.data.campos);
+        // @ts-expect-error
+        setCampos(response.data.campos);
+      } catch (error) {
+        console.error('Error al obtener campos:', error);
+        // agregar manejo de errores
+      }
     };
 
     fetchCampos();
   }, [clienteId]);
 
-  return { campos };
+  return { campos, setCampos };
 };
 
 export default useCampos;
