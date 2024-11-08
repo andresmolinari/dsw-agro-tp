@@ -16,15 +16,17 @@ import {
 } from '@mui/material';
 import { Cliente } from '../types/Cliente';
 import { Add, Delete, Edit, Visibility } from '@mui/icons-material';
-import NuevoCliente from './NuevoCliente';
+import NuevoCliente from '../components/NuevoCliente';
 import ActualizarCliente from '../components/ActualizarCliente';
 
 import { useNavigate } from 'react-router-dom';
+import ClienteService from '../services/ClienteService';
+import NotificationService from '../utils/NotificationService';
 
 const MisClientes: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
@@ -40,21 +42,13 @@ const MisClientes: React.FC = () => {
   const handleUpdateCliente = (updatedCliente: Cliente) => {
     (async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/clientes/${updatedCliente.clienteId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-          body: JSON.stringify(updatedCliente),
-        });
-        if (!response.ok) {
-          throw new Error('Error al actualizar el cliente');
-        }
+        await ClienteService.updateCliente(updatedCliente.clienteId, updatedCliente);
         fetchClientes();
+        NotificationService.info('Cliente actualizado correctamente');
       } catch (error) {
-        setError('Error al actualizar el cliente');
-        console.error('Error al actualizar el cliente:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido al actualizar el cliente';
+        NotificationService.error(errorMessage);
+        console.log('Error al actualizar el cliente:', error);
       } finally {
         setOpenEditModal(false);
       }
@@ -64,18 +58,16 @@ const MisClientes: React.FC = () => {
   const fetchClientes = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/clientes/misClientes', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Error al obtener los clientes');
-      }
-      const data: Cliente[] = await response.json();
-      setClientes(data);
+      const response = await ClienteService.getAllClientes();
+
+      // Si es correcto, asignamos los clientes a la variable de estado
+      setClientes(response.data);
+
+      //  NotificationService.info('Clientes cargados correctamente');
     } catch (error) {
-      setError('Error al cargar los clientes');
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido al cargar los clientes';
+
+      NotificationService.error(errorMessage);
       console.error('Error al cargar los clientes:', error);
     } finally {
       setLoading(false);
@@ -85,19 +77,14 @@ const MisClientes: React.FC = () => {
   const handleDelete = async (clienteId: number) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/clientes/${clienteId}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Error al eliminar el cliente');
-        }
-        // Volver a cargar la lista de clientes
+        await ClienteService.deleteCliente(clienteId);
+
+        NotificationService.info('Cliente eliminado exitosamente');
+
         fetchClientes();
       } catch (error) {
-        setError('Error al eliminar el cliente');
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido al eliminar el cliente';
+        NotificationService.error(errorMessage);
         console.error('Error al eliminar el cliente:', error);
       }
     }
