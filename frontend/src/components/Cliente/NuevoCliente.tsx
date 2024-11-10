@@ -1,15 +1,8 @@
 // NuevoCliente.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import {
-  TextField,
-  Button,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Alert,
-} from '@mui/material';
+import { TextField, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
+import NotificationService from '../../utils/NotificationService';
+import ClienteService from '../../services/ClienteService';
 
 interface NuevoClienteProps {
   open: boolean;
@@ -26,11 +19,7 @@ interface FormValues {
   provincia: string;
 }
 
-const NuevoCliente: React.FC<NuevoClienteProps> = ({
-  open,
-  onClose,
-  onClienteCreado,
-}) => {
+const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCreado }) => {
   const [formValues, setFormValues] = useState<FormValues>({
     nombre: '',
     email: '',
@@ -56,30 +45,33 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({
     setSuccess(null);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/clientes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          clienteNombre: formValues.nombre,
-          clienteEmail: formValues.email,
-          clienteTelefono: formValues.telefono,
-          clienteDireccion: formValues.direccion,
-          clienteLocalidad: formValues.localidad,
-          clienteProvincia: formValues.provincia,
-        }),
+      // Llamada a la API mediante ClienteService
+      const response = await ClienteService.createCliente({
+        clienteNombre: formValues.nombre,
+        clienteEmail: formValues.email,
+        clienteTelefono: formValues.telefono,
+        clienteDireccion: formValues.direccion,
+        clienteLocalidad: formValues.localidad,
+        clienteProvincia: formValues.provincia,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || 'Error al crear cliente');
+      
+      if (response.status === 400 && (response.data as any).message) {
+        const errorMessage = (response.data as any).message;
+        setError(errorMessage);
+        NotificationService.error(errorMessage);
+        return;
+      }
+  
+
+      if (response.status !== 201) {
+        setError('Error al crear cliente');
+        NotificationService.error('Error al crear el cliente');
         return;
       }
 
       setSuccess('Cliente creado con éxito');
+      NotificationService.info('Cliente creado con éxito');
       setFormValues({
         nombre: '',
         email: '',
@@ -91,8 +83,9 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({
       onClienteCreado();
       onClose();
     } catch (error) {
+      console.error('Error al conectar con el servidor:', error);
       setError('Error al conectar con el servidor');
-      console.error(error);
+      NotificationService.error('Error al conectar con el servidor');
     }
   };
 
@@ -111,48 +104,14 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({
               required
               value={formValues.nombre}
               onChange={handleChange}
+              error={Boolean(error && formValues.nombre === '')}
+              helperText={formValues.nombre === '' && error ? error : ''}
             />
-            <TextField
-              label='Email'
-              name='email'
-              fullWidth
-              required
-              type='email'
-              value={formValues.email}
-              onChange={handleChange}
-            />
-            <TextField
-              label='Teléfono'
-              name='telefono'
-              fullWidth
-              required
-              value={formValues.telefono}
-              onChange={handleChange}
-            />
-            <TextField
-              label='Dirección'
-              name='direccion'
-              fullWidth
-              required
-              value={formValues.direccion}
-              onChange={handleChange}
-            />
-            <TextField
-              label='Localidad'
-              name='localidad'
-              fullWidth
-              required
-              value={formValues.localidad}
-              onChange={handleChange}
-            />
-            <TextField
-              label='Provincia'
-              name='provincia'
-              fullWidth
-              required
-              value={formValues.provincia}
-              onChange={handleChange}
-            />
+            <TextField label='Email' name='email' fullWidth required type='email' value={formValues.email} onChange={handleChange} />
+            <TextField label='Teléfono' name='telefono' fullWidth required value={formValues.telefono} onChange={handleChange} />
+            <TextField label='Dirección' name='direccion' fullWidth required value={formValues.direccion} onChange={handleChange} />
+            <TextField label='Localidad' name='localidad' fullWidth required value={formValues.localidad} onChange={handleChange} />
+            <TextField label='Provincia' name='provincia' fullWidth required value={formValues.provincia} onChange={handleChange} />
           </Stack>
         </form>
       </DialogContent>

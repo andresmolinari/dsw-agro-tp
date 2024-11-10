@@ -17,10 +17,7 @@ export const AppRouter = () => {
       <Route path='/app' element={<AppLayout />}>
         <Route path={AppRoutes.HOME} element={<HomePage />} />
         <Route path={AppRoutes.MIS_CLIENTES} element={<MisClientes />} />
-        <Route
-          path={`${AppRoutes.MIS_CLIENTES}/:clienteId`}
-          element={<ClientePage />}
-        />
+        <Route path={`${AppRoutes.MIS_CLIENTES}/:clienteId`} element={<ClientePage />} />
         <Route path={AppRoutes.MIS_TRABAJOS} element={<MisTrabajos />} />
         <Route path={AppRoutes.NUEVO_TRABAJO} element={<NuevoTrabajo />} />
         <Route path={AppRoutes.PROFILE} element={<UserProfile />} />
@@ -28,9 +25,9 @@ export const AppRouter = () => {
       <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
       <Route path={AppRoutes.REGISTER} element={<Register />} />
       <Route path='/' element={<AppLayout />}>
-      <Route path={AppRoutes.GUEST_HOME} element={<GuestHome />} />
+        <Route path={AppRoutes.GUEST_HOME} element={<GuestHome />} />
       </Route>
-      <Route path='*' element={<Navigate to='/' />} />
+      <Route path='*' element={<Navigate to='/app' />} />
     </Routes>
   );
 };

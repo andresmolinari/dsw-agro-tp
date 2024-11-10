@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,18 +13,22 @@ import {
   Box,
   Button,
   Stack,
-} from '@mui/material';
-import { Cliente } from '../types/Cliente';
-import { Add, Delete, Edit, Visibility } from '@mui/icons-material';
-import NuevoCliente from './NuevoCliente';
-import ActualizarCliente from '../components/ActualizarCliente';
+} from "@mui/material";
+import { Cliente } from "../types/Cliente";
+import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
+import NuevoCliente from "../components/Cliente/NuevoCliente";
+import ActualizarCliente from "../components/Cliente/ActualizarCliente";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import ClienteService from "../services/ClienteService";
+import NotificationService from "../utils/NotificationService";
+import ConfirmDialog from "../components/ConfirmDialog";
+import useConfirm from "../hooks/useConfirm";
 
 const MisClientes: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const [clienteSeleccionado, setClienteSeleccionado] =
@@ -32,6 +36,7 @@ const MisClientes: React.FC = () => {
   const navigate = useNavigate();
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+  const { isOpen, message, confirm, cancel, confirmAction } = useConfirm();
 
   const handleEdit = (cliente: Cliente) => {
     setClienteSeleccionado(cliente);
@@ -41,24 +46,19 @@ const MisClientes: React.FC = () => {
   const handleUpdateCliente = (updatedCliente: Cliente) => {
     (async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/clientes/${updatedCliente.clienteId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(updatedCliente),
-          }
+        await ClienteService.updateCliente(
+          updatedCliente.clienteId,
+          updatedCliente
         );
-        if (!response.ok) {
-          throw new Error('Error al actualizar el cliente');
-        }
         fetchClientes();
+        NotificationService.info("Cliente actualizado correctamente");
       } catch (error) {
-        setError('Error al actualizar el cliente');
-        console.error('Error al actualizar el cliente:', error);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Error desconocido al actualizar el cliente";
+        NotificationService.error(errorMessage);
+        console.log("Error al actualizar el cliente:", error);
       } finally {
         setOpenEditModal(false);
       }
@@ -68,49 +68,43 @@ const MisClientes: React.FC = () => {
   const fetchClientes = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        'http://localhost:3000/api/clientes/misClientes',
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error('Error al obtener los clientes');
-      }
-      const data: Cliente[] = await response.json();
-      setClientes(data);
+      const response = await ClienteService.getAllClientes();
+
+      // Si es correcto, asignamos los clientes a la variable de estado
+      setClientes(response.data);
+
+      //  NotificationService.info('Clientes cargados correctamente');
     } catch (error) {
-      setError('Error al cargar los clientes');
-      console.error('Error al cargar los clientes:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Error desconocido al cargar los clientes";
+
+      NotificationService.error(errorMessage);
+      console.error("Error al cargar los clientes:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (clienteId: number) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+    const onConfirm = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/clientes/${clienteId}`,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error('Error al eliminar el cliente');
-        }
-        // Volver a cargar la lista de clientes
+        await ClienteService.deleteCliente(clienteId);
+
+        NotificationService.info("Cliente eliminado exitosamente");
+
         fetchClientes();
       } catch (error) {
-        setError('Error al eliminar el cliente');
-        console.error('Error al eliminar el cliente:', error);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Error desconocido al eliminar el cliente";
+        NotificationService.error(errorMessage);
+        console.error("Error al eliminar el cliente:", error);
       }
     }
+    confirm('¿Estás seguro de que deseas eliminar este campo?', onConfirm);
   };
 
   useEffect(() => {
@@ -122,28 +116,28 @@ const MisClientes: React.FC = () => {
   }
 
   if (error) {
-    return <Alert severity='error'>{error}</Alert>;
+    return <Alert severity="error">{error}</Alert>;
   }
   const handleViewCliente = (clienteId: number) => {
-    navigate(`/mis-clientes/${clienteId}`);
+    navigate(`/app/mis-clientes/${clienteId}`);
   };
 
   return (
     <TableContainer component={Paper} sx={{ padding: 2 }}>
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
           marginBottom: 2,
         }}
       >
-        <Typography variant='h6' component='div'>
+        <Typography variant="h6" component="div">
           Lista de Clientes
         </Typography>
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           onClick={handleOpenModal}
           sx={{ marginRight: 2 }}
         >
@@ -172,45 +166,45 @@ const MisClientes: React.FC = () => {
               <TableCell>{cliente.clienteLocalidad}</TableCell>
               <TableCell>{cliente.clienteProvincia}</TableCell>
               <TableCell>
-                <Stack direction='row' spacing={1}>
+                <Stack direction="row" spacing={1}>
                   <Button
-                    variant='contained'
-                    color='primary'
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleViewCliente(cliente.clienteId)}
+                    sx={{
+                      minWidth: "40px",
+                      padding: "8px",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Visibility />
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
                     onClick={() => handleEdit(cliente)}
                     sx={{
-                      minWidth: '40px',
-                      padding: '8px',
-                      display: 'flex',
-                      justifyContent: 'center',
+                      minWidth: "40px",
+                      padding: "8px",
+                      display: "flex",
+                      justifyContent: "center",
                     }}
                   >
                     <Edit />
                   </Button>
                   <Button
-                    variant='contained'
-                    color='secondary'
+                    variant="contained"
+                    color="secondary"
                     onClick={() => handleDelete(cliente.clienteId)}
                     sx={{
-                      minWidth: '40px',
-                      padding: '8px',
-                      display: 'flex',
-                      justifyContent: 'center',
+                      minWidth: "40px",
+                      padding: "8px",
+                      display: "flex",
+                      justifyContent: "center",
                     }}
                   >
                     <Delete />
-                  </Button>
-                  <Button
-                    variant='contained'
-                    color='secondary'
-                    onClick={() => handleViewCliente(cliente.clienteId)}
-                    sx={{
-                      minWidth: '40px',
-                      padding: '8px',
-                      display: 'flex',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Visibility />
                   </Button>
                 </Stack>
               </TableCell>
@@ -228,6 +222,13 @@ const MisClientes: React.FC = () => {
         open={openEditModal}
         onClose={() => setOpenEditModal(false)}
         onSave={handleUpdateCliente}
+      />
+      {/* Modal reutilizable para confirmar la eliminación */}
+      <ConfirmDialog
+        open={isOpen}
+        message={message}
+        onClose={cancel} // Cierra el modal
+        onConfirm={confirmAction} // Realiza la acción de confirmación
       />
     </TableContainer>
   );

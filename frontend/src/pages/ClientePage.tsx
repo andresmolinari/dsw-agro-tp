@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { CircularProgress, Alert, Typography } from '@mui/material';
-import ClienteCard from '../components/ClienteCard';
+import { CircularProgress, Typography, Box, Container, Paper } from '@mui/material';
+import ClienteCard from '../components/Cliente/ClienteCard';
+import ClienteService from '../services/ClienteService';
+import NotificationService from '../utils/NotificationService';
+import CampoList from '../components/Campo/CampoList';
 
 interface ClienteData {
   clienteId: number;
@@ -17,68 +20,60 @@ const ClientePage: React.FC = () => {
   const { clienteId } = useParams<{ clienteId: string }>();
   const [cliente, setCliente] = useState<ClienteData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCliente = async () => {
       try {
         setLoading(true);
-        setError(null);
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No se encontró un token de autenticación.');
-        }
+        if (!clienteId) throw new Error('ID del cliente no especificado');
 
-        const response = await fetch(
-          `http://localhost:3000/api/clientes/${clienteId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Error al obtener los datos del cliente');
-        }
-
-        const data = await response.json();
-        setCliente(data);
+        const response = await ClienteService.getClienteById(clienteId);
+        setCliente(response.data);
       } catch (error) {
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Error desconocido al cargar los datos del cliente'
-        );
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido al cargar los datos del cliente';
+        NotificationService.error(errorMessage);
         console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (clienteId) {
-      fetchCliente();
-    }
+    fetchCliente();
   }, [clienteId]);
 
   if (loading) {
-    return <CircularProgress />;
-  }
-
-  if (error) {
-    return <Alert severity='error'>{error}</Alert>;
+    return <CircularProgress sx={{ marginTop: '20px', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />;
   }
 
   if (!cliente) {
     return (
-      <Typography color='error'>
+      <Typography color='error' variant='h6' sx={{ textAlign: 'center', marginTop: '20px' }}>
         No se encontraron datos para este cliente.
       </Typography>
     );
   }
 
-  return <ClienteCard cliente={cliente} />;
+  return (
+    <Container maxWidth='lg' sx={{ marginTop: 4 }}>
+      {/* Contenedor Flex para ClienteCard y CampoList */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
+        {/* Contenedor para el ClienteCard a la izquierda */}
+        <Box sx={{ flex: 1 }}>
+          <Paper sx={{ padding: 3, boxShadow: 3 }}>
+            <ClienteCard cliente={cliente} />
+          </Paper>
+        </Box>
+
+        {/* Contenedor para el CampoList a la derecha */}
+        <Box sx={{ flex: 1 }}>
+          <Paper sx={{ padding: 3, boxShadow: 3 }}>
+            <CampoList clienteId={clienteId!} />
+          </Paper>
+        </Box>
+      </Box>
+    </Container>
+  );
 };
 
 export default ClientePage;
