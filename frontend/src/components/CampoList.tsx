@@ -22,6 +22,8 @@ import NotificationService from '../utils/NotificationService';
 import ActualizarCampo from './ActualizarCampo';
 import { Add } from '@mui/icons-material';
 import NuevoCampo from './NuevoCampo';
+import useConfirm from '../hooks/useConfirm';
+import ConfirmDialog from './ConfirmDialog';
 
 interface CamposListProps {
   clienteId: string;
@@ -36,6 +38,7 @@ const CamposList: React.FC<CamposListProps> = ({ clienteId }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+  const { isOpen, message, confirm, cancel, confirmAction } = useConfirm();
 
   // Paginación
   const [page, setPage] = useState<number>(0); // Página actual
@@ -86,7 +89,7 @@ const CamposList: React.FC<CamposListProps> = ({ clienteId }) => {
   }
   
   const handleDelete = async (campoId: number) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este campo?')) {
+    const onConfirm = async () => {
       try {
         // Llamada al servicio para eliminar el campo
         await CampoService.deleteCampo(campoId);
@@ -103,7 +106,10 @@ const CamposList: React.FC<CamposListProps> = ({ clienteId }) => {
         console.error('Error al eliminar el campo:', error);
       }
     }
+    confirm('¿Estás seguro de que deseas eliminar este campo?', onConfirm);
   };
+
+ 
   
   useEffect(() => {
     fetchCampos();
@@ -191,6 +197,14 @@ const CamposList: React.FC<CamposListProps> = ({ clienteId }) => {
           onSave={(updatedCampo) => handleUpdateCampo(updatedCampo.campoId, updatedCampo)}
         />
       </TableContainer>
+
+      {/* Modal reutilizable para confirmar la eliminación */}
+      <ConfirmDialog
+        open={isOpen}
+        message={message}
+        onClose={cancel} // Cierra el modal
+        onConfirm={confirmAction} // Realiza la acción de confirmación
+      />
 
       {/* Paginación */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>

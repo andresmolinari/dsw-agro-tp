@@ -42,6 +42,10 @@ const themeOptions: ThemeOptions = {
           fontFamily: ThemePalette.FONT_GLOBAL,
           '&:hover': {
             backgroundColor: 'rgba(255,255,255,0.2)', // Color de hover
+            color: '#000000',
+          },
+          '&:focus': {
+            color: '#000000', // Color de texto en foco
           },
         },
       },

@@ -22,6 +22,8 @@ import ActualizarCliente from "../components/ActualizarCliente";
 import { useNavigate } from "react-router-dom";
 import ClienteService from "../services/ClienteService";
 import NotificationService from "../utils/NotificationService";
+import ConfirmDialog from "../components/ConfirmDialog";
+import useConfirm from "../hooks/useConfirm";
 
 const MisClientes: React.FC = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -34,6 +36,7 @@ const MisClientes: React.FC = () => {
   const navigate = useNavigate();
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+  const { isOpen, message, confirm, cancel, confirmAction } = useConfirm();
 
   const handleEdit = (cliente: Cliente) => {
     setClienteSeleccionado(cliente);
@@ -85,7 +88,7 @@ const MisClientes: React.FC = () => {
   };
 
   const handleDelete = async (clienteId: number) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
+    const onConfirm = async () => {
       try {
         await ClienteService.deleteCliente(clienteId);
 
@@ -101,6 +104,7 @@ const MisClientes: React.FC = () => {
         console.error("Error al eliminar el cliente:", error);
       }
     }
+    confirm('¿Estás seguro de que deseas eliminar este campo?', onConfirm);
   };
 
   useEffect(() => {
@@ -218,6 +222,13 @@ const MisClientes: React.FC = () => {
         open={openEditModal}
         onClose={() => setOpenEditModal(false)}
         onSave={handleUpdateCliente}
+      />
+      {/* Modal reutilizable para confirmar la eliminación */}
+      <ConfirmDialog
+        open={isOpen}
+        message={message}
+        onClose={cancel} // Cierra el modal
+        onConfirm={confirmAction} // Realiza la acción de confirmación
       />
     </TableContainer>
   );
