@@ -24,7 +24,8 @@ interface DetalleTrabajo {
 
 const MisTrabajos: React.FC = () => {
   const navigate = useNavigate();
-  const [fecha, setFecha] = useState<string>('');
+  const [fecha, setFecha] = useState<string>(
+    new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())).toISOString().split('T')[0]);
   const [tipo, setTipo] = useState<string>('');
   const [clienteId, setClienteId] = useState<string>('');
   const [campoId, setCampoId] = useState<string>('');
@@ -285,7 +286,7 @@ const MisTrabajos: React.FC = () => {
                 onClick={handleOpenLoteModal}
               >
                 {' '}
-                A{' '}
+                +{' '}
               </Button>
             </Box>
 

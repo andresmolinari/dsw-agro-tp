@@ -1,32 +1,25 @@
-// NuevoCliente.tsx
+// NuevoCampo.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { TextField, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
 import NotificationService from '../utils/NotificationService';
-import ClienteService from '../services/ClienteService';
+import CampoService from '../services/CampoService';
 
-interface NuevoClienteProps {
+interface NuevoCampoProps {
+  clienteId: string;
   open: boolean;
   onClose: () => void;
-  onClienteCreado: () => void;
+  onCampoCreado: () => void;
 }
 
 interface FormValues {
   nombre: string;
-  email: string;
-  telefono: string;
-  direccion: string;
-  localidad: string;
-  provincia: string;
+  ubicacion: string;
 }
 
-const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCreado }) => {
+const NuevoCampo: React.FC<NuevoCampoProps> = ({ open, onClose, onCampoCreado , clienteId}) => {
   const [formValues, setFormValues] = useState<FormValues>({
     nombre: '',
-    email: '',
-    telefono: '',
-    direccion: '',
-    localidad: '',
-    provincia: '',
+    ubicacion: '',
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -45,14 +38,11 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
     setSuccess(null);
 
     try {
-      // Llamada a la API mediante ClienteService
-      const response = await ClienteService.createCliente({
-        clienteNombre: formValues.nombre,
-        clienteEmail: formValues.email,
-        clienteTelefono: formValues.telefono,
-        clienteDireccion: formValues.direccion,
-        clienteLocalidad: formValues.localidad,
-        clienteProvincia: formValues.provincia,
+      // Llamada a la API mediante CampoService
+      
+      const response = await CampoService.createCampo(clienteId, {
+        campoNombre: formValues.nombre,
+        campoUbicacion: formValues.ubicacion,
       });
 
       
@@ -65,22 +55,18 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
   
 
       if (response.status !== 201) {
-        setError('Error al crear cliente');
-        NotificationService.error('Error al crear el cliente');
+        setError('Error al crear campo');
+        NotificationService.error('Error al crear el campo');
         return;
       }
 
-      setSuccess('Cliente creado con éxito');
-      NotificationService.info('Cliente creado con éxito');
+      setSuccess('Campo creado con éxito');
+      NotificationService.info('Campo creado con éxito');
       setFormValues({
         nombre: '',
-        email: '',
-        telefono: '',
-        direccion: '',
-        localidad: '',
-        provincia: '',
+        ubicacion: '',
       });
-      onClienteCreado();
+      onCampoCreado();
       onClose();
     } catch (error) {
       console.error('Error al conectar con el servidor:', error);
@@ -91,7 +77,7 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
-      <DialogTitle>Crear Nuevo Cliente</DialogTitle>
+      <DialogTitle>Crear Nuevo Campo</DialogTitle>
       <DialogContent>
         {error && <Alert severity='error'>{error}</Alert>}
         {success && <Alert severity='success'>{success}</Alert>}
@@ -107,11 +93,7 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
               error={Boolean(error && formValues.nombre === '')}
               helperText={formValues.nombre === '' && error ? error : ''}
             />
-            <TextField label='Email' name='email' fullWidth required type='email' value={formValues.email} onChange={handleChange} />
-            <TextField label='Teléfono' name='telefono' fullWidth required value={formValues.telefono} onChange={handleChange} />
-            <TextField label='Dirección' name='direccion' fullWidth required value={formValues.direccion} onChange={handleChange} />
-            <TextField label='Localidad' name='localidad' fullWidth required value={formValues.localidad} onChange={handleChange} />
-            <TextField label='Provincia' name='provincia' fullWidth required value={formValues.provincia} onChange={handleChange} />
+            <TextField label='Ubicacion' name='ubicacion' fullWidth required value={formValues.ubicacion} onChange={handleChange} />
           </Stack>
         </form>
       </DialogContent>
@@ -120,11 +102,11 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
           Cancelar
         </Button>
         <Button onClick={handleSubmit} variant='contained' color='primary'>
-          Guardar Cliente
+          Guardar Campo
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default NuevoCliente;
+export default NuevoCampo;

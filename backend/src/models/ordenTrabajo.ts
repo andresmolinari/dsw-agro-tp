@@ -17,7 +17,7 @@ OrdenTrabajo.init(
       autoIncrement: true, 
     },
     fecha: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: false,
     },
     costototal: {
