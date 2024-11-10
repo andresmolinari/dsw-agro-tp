@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import { Cliente } from "../types/Cliente";
 import { Add, Delete, Edit, Visibility } from "@mui/icons-material";
-import NuevoCliente from "../components/NuevoCliente";
-import ActualizarCliente from "../components/ActualizarCliente";
+import NuevoCliente from "../components/Cliente/NuevoCliente";
+import ActualizarCliente from "../components/Cliente/ActualizarCliente";
 
 import { useNavigate } from "react-router-dom";
 import ClienteService from "../services/ClienteService";

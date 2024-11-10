@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, MenuItem, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import CampoModal from '../components/CampoModal';
+import CampoModal from '../components/Campo/CampoModal';
 import LoteModal from '../components/LoteModal';
 import useClientes from '../hooks/useClientes';
 import useCampos from '../hooks/useCampos';

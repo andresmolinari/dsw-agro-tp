@@ -1,8 +1,8 @@
 // NuevoCliente.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { TextField, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
-import NotificationService from '../utils/NotificationService';
-import ClienteService from '../services/ClienteService';
+import NotificationService from '../../utils/NotificationService';
+import ClienteService from '../../services/ClienteService';
 
 interface NuevoClienteProps {
   open: boolean;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Campo } from '../types/Campo';
+import { Campo } from '../../types/Campo';
 import {
   Table,
   TableBody,
@@ -17,13 +17,13 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import CampoService from '../services/CampoService';
-import NotificationService from '../utils/NotificationService';
+import CampoService from '../../services/CampoService';
+import NotificationService from '../../utils/NotificationService';
 import ActualizarCampo from './ActualizarCampo';
 import { Add } from '@mui/icons-material';
-import NuevoCampo from './NuevoCampo';
-import useConfirm from '../hooks/useConfirm';
-import ConfirmDialog from './ConfirmDialog';
+import NuevoCampo from '../NuevoCampo';
+import useConfirm from '../../hooks/useConfirm';
+import ConfirmDialog from '../ConfirmDialog';
 
 interface CamposListProps {
   clienteId: string;
