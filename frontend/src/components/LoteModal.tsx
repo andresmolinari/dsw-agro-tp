@@ -19,7 +19,7 @@ interface LoteModalProps {
 }
 
 const LoteModal: React.FC<LoteModalProps> = ({ open, handleClose, onSave, campoId }) => {
-  const [loteNro, setLoteNro] = useState<string>('');
+  const [loteNro, setLoteNro] = useState<number>(0);
   const [loteHectareas, setLoteHectareas] = useState<number>(0);
 
   const handleSave = async () => {
@@ -41,9 +41,8 @@ const LoteModal: React.FC<LoteModalProps> = ({ open, handleClose, onSave, campoI
 
     // const nuevoLote: Lote = await response.json();
 
-    const creatingLote: Lote = {
-      loteId: 0,
-      campoId: 0,
+    const creatingLote: Partial<Lote> = {
+      campoId: campoId,
       loteNro: Number(loteNro),
       loteHectareas: loteHectareas,
       // campo: undefined
@@ -58,7 +57,7 @@ const LoteModal: React.FC<LoteModalProps> = ({ open, handleClose, onSave, campoI
         NotificationService.error('No se pudo crear el lote');
       })
       .finally(() => {
-        setLoteNro('');
+        setLoteNro(0);
         setLoteHectareas(0);
         handleClose();
       });
@@ -82,7 +81,7 @@ const LoteModal: React.FC<LoteModalProps> = ({ open, handleClose, onSave, campoI
         <Typography variant='h6' component='h2'>
           Agregar Lote
         </Typography>
-        <TextField fullWidth margin='normal' label='Número de Lote' value={loteNro} onChange={(e) => setLoteNro(e.target.value)} />
+        <TextField fullWidth margin='normal' label='Número de Lote' value={loteNro} onChange={(e) => setLoteNro(Number(e.target.value))} />
         <TextField
           fullWidth
           margin='normal'

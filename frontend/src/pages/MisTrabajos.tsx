@@ -104,7 +104,9 @@ const OrdenesTrabajoList: React.FC = () => {
           {sortedOrdenes.map((orden) => (
             <TableRow key={orden.nroOrdenTrabajo}>
               <TableCell>
-                {new Date(orden.fecha).toLocaleDateString()}
+                {new Date(orden.fecha).toLocaleDateString("es-ES", {
+                  timeZone: "UTC", // Especifica UTC para evitar cambios en la zona horaria
+                })}
               </TableCell>
               <TableCell>{orden.tipo}</TableCell>
               <TableCell>
