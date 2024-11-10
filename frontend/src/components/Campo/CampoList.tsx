@@ -21,7 +21,7 @@ import CampoService from '../../services/CampoService';
 import NotificationService from '../../utils/NotificationService';
 import ActualizarCampo from './ActualizarCampo';
 import { Add } from '@mui/icons-material';
-import NuevoCampo from '../NuevoCampo';
+import NuevoCampo from './NuevoCampo';
 import useConfirm from '../../hooks/useConfirm';
 import ConfirmDialog from '../ConfirmDialog';
 

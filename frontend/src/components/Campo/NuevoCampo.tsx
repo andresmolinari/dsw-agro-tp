@@ -1,8 +1,8 @@
 // NuevoCampo.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { TextField, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
-import NotificationService from '../utils/NotificationService';
-import CampoService from '../services/CampoService';
+import NotificationService from '../../utils/NotificationService';
+import CampoService from '../../services/CampoService';
 
 interface NuevoCampoProps {
   clienteId: string;
