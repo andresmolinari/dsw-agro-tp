@@ -11,8 +11,11 @@ import ClientePage from '../pages/ClientePage';
 import UserProfile from '../pages/UserProfile';
 import { GuestHome } from '../pages/GuestHome';
 import MisUsuarios from '../pages/Usuarios';
+import { useAuth } from '../context/AuthContext';
 
 export const AppRouter = () => {
+  const { role } = useAuth();
+
   return (
     <Routes>
       <Route path='/app' element={<AppLayout />}>
@@ -22,7 +25,10 @@ export const AppRouter = () => {
         <Route path={AppRoutes.MIS_TRABAJOS} element={<MisTrabajos />} />
         <Route path={AppRoutes.NUEVO_TRABAJO} element={<NuevoTrabajo />} />
         <Route path={AppRoutes.PROFILE} element={<UserProfile />} />
-        <Route path={AppRoutes.MIS_USUARIOS} element={<MisUsuarios />} />
+        {/* SOLO ADMIN */}
+        {role === 2 && (
+          <Route path={AppRoutes.MIS_USUARIOS} element={<MisUsuarios />} />
+        )}
       </Route>
       <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
       <Route path={AppRoutes.REGISTER} element={<Register />} />

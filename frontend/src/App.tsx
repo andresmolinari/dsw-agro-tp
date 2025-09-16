@@ -13,7 +13,7 @@ const App: React.FC = () => {
     const token = localStorage.getItem('token');
     if (token !== null && token !== undefined && token !== '') {
       try {
-        const decodedToken: { exp: number } = jwtDecode(token);
+        const decodedToken: { exp: number; rolId: number } = jwtDecode(token);
         const currentTime = Date.now() / 1000;
 
         if (decodedToken.exp < currentTime) {
@@ -24,7 +24,7 @@ const App: React.FC = () => {
           NotificationService.error('Token ha expirado');
         } else {
           // Token valido
-          login();
+          login(decodedToken.rolId); // guardamos rol en el contexto
         }                                                        // TODO: arreglar condicion
       } catch (error) {
         // Token invalido
