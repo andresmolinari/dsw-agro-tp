@@ -6,6 +6,7 @@ export interface UsuarioAttributes {
   usuarioNombre: string;
   usuarioEmail: string;
   usuarioContraseña: string;
+  rolId?: number;
 }
 
 export class Usuario
@@ -16,6 +17,7 @@ export class Usuario
   public usuarioNombre!: string;
   public usuarioEmail!: string;
   public usuarioContraseña!: string;
+  public rolId?: number;
 
   static initModel(sequelize: Sequelize) {
     Usuario.init(
@@ -37,6 +39,14 @@ export class Usuario
           type: DataTypes.STRING,
           allowNull: false,
         },
+        rolId: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+          references: { model: 'Roles', key: 'rolId' },
+          onUpdate: 'CASCADE',
+          onDelete: 'SET NULL',
+        },
+      
       },
       {
         sequelize,

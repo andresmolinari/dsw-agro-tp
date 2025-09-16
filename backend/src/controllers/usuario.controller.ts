@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import usuarioRepository from '../repositories/usuario.repository';
-import { Usuario } from '../models/usuario';
+import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import usuarioRepository from "../repositories/usuario.repository";
+import { Usuario } from "../models/usuario";
+import { get } from "http";
 
 // sanitizacion middleware
 // function sanitizeusuarioInput(req: Request, res: Response, next: NextFunction) {
@@ -26,16 +27,22 @@ import { Usuario } from '../models/usuario';
 // }
 
 // obtener todos los usuarios
-// const getUsuarios = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const usuarioId = req.body.usuarioId;
-//     const usuarios = await usuarioRepository.getUsuarios(usuarioId);
-//     res.status(200).json(usuarios);
-//   } catch (error) {
-//     console.error(error); // Log para entender el error
-//     res.status(500).json({ message: "Error al obtener usuarios" });
-//   }
-// };
+const getUsuarios = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const usuarios = await usuarioRepository.getUsuarios();
+
+    // Excluir el campo usuarioContraseña de la respuesta
+    const usuariosSinPassword = usuarios.map((u: any) => {
+      const { usuarioContraseña, ...rest } = u.toJSON(); // Sequelize instance
+      return rest;
+    });
+
+    res.status(200).json(usuariosSinPassword);
+  } catch (error) {
+    console.error(error); // Log para entender el error
+    res.status(500).json({ message: "Error al obtener usuarios" });
+  }
+};
 
 //  obtener un usuario
 const getUsuario = async (req: Request, res: Response): Promise<void> => {
@@ -47,7 +54,7 @@ const getUsuario = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json(usuario);
   } catch (error) {
     console.error(error); // Log para entender el error
-    res.status(500).json({ message: 'Error al obtener un usuario' });
+    res.status(500).json({ message: "Error al obtener un usuario" });
   }
 };
 
@@ -55,8 +62,10 @@ const getUsuario = async (req: Request, res: Response): Promise<void> => {
 const createUsuario = async (req: Request, res: Response): Promise<void> => {
   const { usuarioNombre, usuarioEmail, usuarioContraseña } = req.body;
 
+  const rolId = 1; // Asignar rol de usuario por defecto
+
   if (!usuarioNombre || !usuarioEmail || !usuarioContraseña) {
-    res.status(400).json({ message: 'Todos los campos son requeridos' });
+    res.status(400).json({ message: "Todos los campos son requeridos" });
     return;
   }
 
@@ -64,12 +73,12 @@ const createUsuario = async (req: Request, res: Response): Promise<void> => {
   const existeEmail = await usuarioRepository.getUsuarioByEmail(usuarioEmail);
 
   if (existeNombre && existeNombre.usuarioNombre === usuarioNombre) {
-    res.status(400).json({ message: 'Ya existe un usuario con ese nombre' });
+    res.status(400).json({ message: "Ya existe un usuario con ese nombre" });
     return;
   }
 
   if (existeEmail && existeEmail.usuarioEmail === usuarioEmail) {
-    res.status(400).json({ message: 'Ya existe un usuario con ese email' });
+    res.status(400).json({ message: "Ya existe un usuario con ese email" });
     return;
   }
 
@@ -79,12 +88,13 @@ const createUsuario = async (req: Request, res: Response): Promise<void> => {
     const newUsuario = await usuarioRepository.createUsuario(
       usuarioNombre,
       usuarioEmail,
-      hashedPassword
+      hashedPassword,
+      rolId
     );
     res.status(201).json(newUsuario);
   } catch (error) {
     console.error(error); // Log para entender el error
-    res.status(500).json({ message: 'Error al crear usuario' });
+    res.status(500).json({ message: "Error al crear usuario" });
   }
 };
 
@@ -117,10 +127,11 @@ export const loginUser = async (req: Request, res: Response) => {
     {
       usuarioId: user.usuarioId,
       usuarioNombre: name,
+      rolId: user.rolId,
     },
-    process.env.SECRET_KEY || 'moli123',
+    process.env.SECRET_KEY || "moli123",
     {
-      expiresIn: 1800, 
+      expiresIn: 1800,
     }
   );
   console.log(user.usuarioId);
@@ -140,7 +151,7 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     );
 
     if (!usuarioActual) {
-      res.status(404).json({ message: 'usuario no encontrado' });
+      res.status(404).json({ message: "usuario no encontrado" });
       return;
     }
 
@@ -151,9 +162,7 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
       );
 
       if (existeEmail) {
-        res
-          .status(400)
-          .json({ message: 'Ya existe un usuario con ese email' });
+        res.status(400).json({ message: "Ya existe un usuario con ese email" });
         return;
       }
     }
@@ -170,8 +179,8 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     // Retornar la respuesta exitosa
     res.status(200).json(updatedUsuario);
   } catch (error) {
-    console.error('Error al actualizar usuario:', error);
-    res.status(500).json({ message: 'Error al actualizar usuario' });
+    console.error("Error al actualizar usuario:", error);
+    res.status(500).json({ message: "Error al actualizar usuario" });
   }
 };
 
@@ -185,17 +194,18 @@ const deleteUsuario = async (req: Request, res: Response): Promise<void> => {
     );
 
     if (usuarioEliminado) {
-      res.status(200).json({ message: 'usuario eliminado correctamente' });
+      res.status(200).json({ message: "usuario eliminado correctamente" });
     } else {
-      res.status(404).json({ message: 'usuario no encontrado' });
+      res.status(404).json({ message: "usuario no encontrado" });
     }
   } catch (error) {
-    console.error('Error al eliminar usuario:', error);
-    res.status(500).json({ message: 'Error al eliminar usuario' });
+    console.error("Error al eliminar usuario:", error);
+    res.status(500).json({ message: "Error al eliminar usuario" });
   }
 };
 
 export const controller = {
+  getUsuarios,
   getUsuario,
   createUsuario,
   loginUser,

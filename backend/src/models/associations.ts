@@ -9,6 +9,7 @@ import { OrdenTrabajo } from "./ordenTrabajo";
 import { Cosecha } from "./cosecha";
 import { Fumigacion } from "./fumigacion";
 import { Siembra } from "./siembra";
+import { Rol } from "./rol";
 
 export function defineAssociations() {
   // Inicializar modelos
@@ -17,6 +18,7 @@ export function defineAssociations() {
   Cliente.initModel(sequelize);
   Campo.initModel(sequelize);
   Lote.initModel(sequelize);
+  Rol.initModel(sequelize);
 
   // Definir asociaciones
 
@@ -70,6 +72,15 @@ export function defineAssociations() {
     as: "usuario",
   });
 
-  Lote.hasMany(OrdenTrabajo, {  foreignKey: "loteId", as: "ordenesTrabajo" });
+  Lote.hasMany(OrdenTrabajo, { foreignKey: "loteId", as: "ordenesTrabajo" });
   OrdenTrabajo.belongsTo(Lote, { foreignKey: "loteId", as: "lote" });
+
+  Rol.hasMany(Usuario, {
+    foreignKey: "rolId",
+    as: "usuarios",
+  });
+  Usuario.belongsTo(Rol, {
+    foreignKey: "rolId",
+    as: "rol",
+  });
 }

@@ -1,17 +1,15 @@
-import { Cliente } from "../models/cliente";
 import { Usuario, UsuarioAttributes } from "../models/usuario";
 
 //obtener todos los usuarios
-// const getusuarios = async (usuarioId: number): Promise<usuario[]> => {
-//   try {
-//     return await usuario.findAll({
-//       where: {usuarioId},
-//     });
-//   } catch (error) {
-//     console.error("Error en la consulta a la base de datos:", error);
-//     throw error;
-//   }
-// };
+const getUsuarios = async (): Promise<Usuario[]> => {
+  try {
+    return await Usuario.findAll({ 
+    });
+  } catch (error) {
+    console.error("Error en la consulta a la base de datos:", error);
+    throw error;
+  }
+};
 
 // obtener un usuario
 const getUsuario = async (usuarioId: number): Promise<Usuario | null> => {
@@ -63,13 +61,15 @@ const getUsuarioByEmail = async (
 const createUsuario = async (
   usuarioNombre: string,
   usuarioEmail: string,
-  hashedPassword: string
+  hashedPassword: string,
+  rolId: number
 ): Promise<Usuario> => {
   try {
     return await Usuario.create({
       usuarioNombre: usuarioNombre,
       usuarioEmail: usuarioEmail,
       usuarioContraseña: hashedPassword,
+      rolId: rolId,
     });
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
@@ -117,6 +117,7 @@ const deleteUsuario = async (usuarioId: number): Promise<boolean> => {
 };
 
 const usuarioRepository = {
+  getUsuarios,
   getUsuario,
   getUsuarioByName,
   getUsuarioByEmail,
