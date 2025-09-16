@@ -8,4 +8,5 @@ export enum AppRoutes {
   NUEVO_CLIENTE = '/app/nuevo-cliente',
   PROFILE = '/app/profile',
   GUEST_HOME = '/',
+  MIS_USUARIOS = '/app/mis-usuarios',
 }

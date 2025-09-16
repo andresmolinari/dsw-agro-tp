@@ -1,9 +1,11 @@
 import { Usuario, UsuarioAttributes } from "../models/usuario";
+import { Rol } from "../models/rol";
 
 //obtener todos los usuarios
 const getUsuarios = async (): Promise<Usuario[]> => {
   try {
-    return await Usuario.findAll({ 
+    return await Usuario.findAll({
+      include: [{ model: Rol, attributes: ["rolId", "rolNombre"], as: "rol" }],
     });
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
@@ -106,6 +108,10 @@ const deleteUsuario = async (usuarioId: number): Promise<boolean> => {
 
     if (!usuario) {
       throw new Error("usuario no encontrado");
+    }
+
+    if (usuario.rolId === 2) {
+      throw new Error("No se puede eliminar un usuario admin");
     }
 
     await usuario.destroy(); // Eliminamos el usuario

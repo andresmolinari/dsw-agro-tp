@@ -10,6 +10,7 @@ import NuevoTrabajo from '../pages/NuevoTrabajo';
 import ClientePage from '../pages/ClientePage';
 import UserProfile from '../pages/UserProfile';
 import { GuestHome } from '../pages/GuestHome';
+import MisUsuarios from '../pages/Usuarios';
 
 export const AppRouter = () => {
   return (
@@ -21,6 +22,7 @@ export const AppRouter = () => {
         <Route path={AppRoutes.MIS_TRABAJOS} element={<MisTrabajos />} />
         <Route path={AppRoutes.NUEVO_TRABAJO} element={<NuevoTrabajo />} />
         <Route path={AppRoutes.PROFILE} element={<UserProfile />} />
+        <Route path={AppRoutes.MIS_USUARIOS} element={<MisUsuarios />} />
       </Route>
       <Route path={AppRoutes.LOGIN} element={<LoginPage />} />
       <Route path={AppRoutes.REGISTER} element={<Register />} />
