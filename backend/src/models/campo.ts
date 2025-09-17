@@ -1,5 +1,6 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../db/connection';
+import { Cliente } from './cliente'; 
 
 export interface CampoAttributes {
   campoId?: number;
@@ -13,6 +14,8 @@ export class Campo extends Model<CampoAttributes> implements CampoAttributes {
   public clienteId!: number;
   public campoNombre!: string;
   public campoUbicacion: string | undefined;
+
+   public cliente?: Cliente;
 
   static initModel(sequelize: Sequelize) {
     Campo.init(

@@ -18,7 +18,8 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useOrdenesTrabajo } from "../hooks/useOrdenesTrabajo";
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { ArrowUpward, ArrowDownward, PictureAsPdf } from "@mui/icons-material";
+import { downloadOrdenTrabajoPDF } from "../utils/DownloadPDF";
 
 const OrdenesTrabajoList: React.FC = () => {
   const { ordenes, loading, error } = useOrdenesTrabajo();
@@ -49,6 +50,15 @@ const OrdenesTrabajoList: React.FC = () => {
   const handleFilterChange = (event: SelectChangeEvent<string>) => {
     setFilterType(event.target.value);
   };
+
+  const handleDownloadPDF = async (nroOrdenTrabajo: number) => {
+  try {
+   
+    await downloadOrdenTrabajoPDF(nroOrdenTrabajo);
+  } catch (error) {
+    alert("No se pudo descargar el PDF");
+  }
+};
 
   return (
     <TableContainer component={Paper} sx={{ padding: 2 }}>
@@ -135,6 +145,14 @@ const OrdenesTrabajoList: React.FC = () => {
                     <p>Precio: {orden.Fumigacion.precio}</p>
                   </div>
                 )}
+              </TableCell>
+              <TableCell>
+                <IconButton
+                  color="primary"
+                  onClick={() => handleDownloadPDF(orden.nroOrdenTrabajo)}
+                >
+                  <PictureAsPdf />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}

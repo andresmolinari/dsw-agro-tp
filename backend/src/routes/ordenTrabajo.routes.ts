@@ -10,5 +10,7 @@ ordenTrabajoRouter.get("/", validateToken, controller.getOrdenesTrabajo);
 ordenTrabajoRouter.post("/", validateToken, controller.createOrdenTrabajo);
 //ordenTrabajoRouter.put("/:campoId/:loteId", validateToken, controller.updateOrdenTrabajo);
 //ordenTrabajoRouter.delete("/:campoId/:loteId", validateToken, controller.deleteOrdenTrabajo);
+ordenTrabajoRouter.get("/pdf/:nroOrdenTrabajo", validateToken, controller.descargarOrdenTrabajo);
+ordenTrabajoRouter.get("/:nroOrdenTrabajo", validateToken, controller.getOrdenTrabajoById);
 
 export default ordenTrabajoRouter;

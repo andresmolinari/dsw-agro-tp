@@ -104,7 +104,38 @@ const getOrdenesTrabajo = async (
   }
 };
 
+const getOrdenTrabajoById = async (ordenId: number, usuarioId: number): Promise<OrdenTrabajo | null> => {
+  return await OrdenTrabajo.findOne({
+    where: { nroOrdenTrabajo: ordenId, usuarioId },
+    include: [
+      Cosecha,
+      Siembra,
+      Fumigacion,
+      {
+        model: Lote,
+        as: 'lote',
+        attributes: ['loteNro'],
+        include: [
+          {
+            model: Campo,
+            as: 'campo',
+            attributes: ['campoNombre'],
+            include: [
+              {
+                model: Cliente,
+                as: 'cliente',
+                attributes: ['clienteNombre'],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+};
+
 export const ordenTrabajoRepository = {
   createOrdenTrabajo,
   getOrdenesTrabajo,
+  getOrdenTrabajoById,
 };

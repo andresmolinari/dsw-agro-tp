@@ -1,5 +1,6 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
 import sequelize from '../db/connection';
+import { Campo } from './campo'; // importa tu modelo de Campo
 
 export interface LoteAttributes {
   loteId?: number;
@@ -14,6 +15,9 @@ export class Lote extends Model<LoteAttributes> implements LoteAttributes {
   public loteNro!: number;
   public loteHectareas!: number;
 
+  // Propiedad de la asociación
+  public campo?: Campo;
+
   static initModel(sequelize: Sequelize) {
     Lote.init(
       {
@@ -26,7 +30,7 @@ export class Lote extends Model<LoteAttributes> implements LoteAttributes {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: {
-            model: 'Campos', 
+            model: 'Campos',
             key: 'campoId',
           },
           onUpdate: 'CASCADE',
