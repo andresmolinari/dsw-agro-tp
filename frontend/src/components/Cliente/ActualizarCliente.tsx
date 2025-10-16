@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import { Cliente } from '../types/Cliente';
+import { Cliente } from '../../types/Cliente';
 
 interface ActualizarClienteProps {
   cliente: Cliente | null;

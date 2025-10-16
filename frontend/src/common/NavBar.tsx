@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -7,26 +7,31 @@ import {
   Menu,
   MenuItem,
   Stack,
+  IconButton,
   styled,
   Toolbar,
   Typography,
-} from '@mui/material';
-import { AccountCircle } from '@mui/icons-material'; 
-import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../types/AppRoutes';
-import { useAuth } from '../context/AuthContext';
-import { jwtDecode } from 'jwt-decode';
 
-export const NavBar: React.FC = () => {
+} from "@mui/material";
+import { Menu as MenuIcon, AccountCircle } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../types/AppRoutes";
+import { useAuth } from "../context/AuthContext";
+import { jwtDecode } from "jwt-decode";
+
+interface NavBarProps {
+  onMenuClick?: () => void; // para abrir el drawer en móviles
+}
+
+export const NavBar: React.FC<NavBarProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
-
-  const { isAuthenticated, logout } = useAuth(); // Asume que tienes una función logout en el contexto
+  const { isAuthenticated, logout } = useAuth();
   const [username, setUsername] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         interface DecodedToken {
           usuarioNombre: string;
@@ -37,59 +42,67 @@ export const NavBar: React.FC = () => {
     }
   }, [isAuthenticated]);
 
-  const onClickLoginButton = () => {
-    navigate(AppRoutes.LOGIN);
-  };
-
-  const onClickRegisterButton = () => {
-    navigate(AppRoutes.REGISTER);
-  };
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
+  const handleMenuClose = () => setAnchorEl(null);
   const handleProfile = () => {
     navigate(AppRoutes.PROFILE);
     handleMenuClose();
   };
-
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     handleMenuClose();
-    navigate(AppRoutes.HOME); // Redirigir al Home después de logout
+    navigate(AppRoutes.HOME);
   };
-
-  const handleAgroClick = () => {
-    navigate(AppRoutes.HOME); // Redirigir al Home cuando se hace clic en Agro
-  };
+  const handleAgroClick = () => navigate(AppRoutes.HOME);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='fixed'>
+      <AppBar position="fixed">
         <Toolbar>
           <Container>
             <Box
-              display='flex'
-              justifyContent='space-between'
-              alignItems='center'
-              width='100%'
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              width="100%"
             >
-              {/* Hacer clic en "Agro" redirige al home */}
-              <Typography variant="h6" onClick={handleAgroClick} sx={{ cursor: 'pointer' }}>
-                Agro
-              </Typography>
-              <Stack direction='row' spacing={2} alignItems='center'>
+              <Box display="flex" alignItems="center">
+                {onMenuClick && (
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  edge="start"
+                  onClick={onMenuClick}
+                  sx={{ mr: 2 }}
+                >
+                  <MenuIcon />
+                </IconButton>
+                )}
+                <Typography
+                  variant="h6"
+                  onClick={handleAgroClick}
+                  sx={{ cursor: "pointer" }}
+                >
+                  Agro
+                </Typography>
+              </Box>
+
+              <Stack direction="row" spacing={2} alignItems="center">
                 {isAuthenticated ? (
                   <>
-                    <Stack direction='row' spacing={1} alignItems='center' onClick={handleMenuOpen} style={{ cursor: 'pointer' }}>
-                      <AccountCircle /> {/* Ícono de usuario */}
-                      <Typography variant='body1'>{username}</Typography>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                      onClick={handleMenuOpen}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      <AccountCircle />
+                      <Typography variant="body1">{username}</Typography>
                     </Stack>
                     <Menu
                       anchorEl={anchorEl}
@@ -104,10 +117,15 @@ export const NavBar: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Button variant='contained' onClick={onClickLoginButton}>
+                    <Button
+                      variant="contained"
+                      onClick={() => navigate(AppRoutes.LOGIN)}
+                    >
                       Login
                     </Button>
-                    <RegisterButton onClick={onClickRegisterButton}>
+                    <RegisterButton
+                      onClick={() => navigate(AppRoutes.REGISTER)}
+                    >
                       Register
                     </RegisterButton>
                   </>
@@ -122,18 +140,17 @@ export const NavBar: React.FC = () => {
 };
 
 const RegisterButton = styled(Button)(({ theme }) => ({
-  backgroundColor: 'rgba(255,255,255,0.1)',
-  color: '#333',
+  backgroundColor: "rgba(255,255,255,0.1)",
+  color: "#333",
   borderColor: theme.palette.primary.main,
-  '&:hover': {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    color: '#222',
+  "&:hover": {
+    backgroundColor: "rgba(255,255,255,0.2)",
+    color: "#222",
   },
 }));
 
-// Estilo personalizado para el menú "Cerrar sesión"
 const LogoutMenuItem = styled(MenuItem)(({ theme }) => ({
-  color: theme.palette.error.main, // Color rojo
+  color: theme.palette.error.main,
 }));
 
 export default NavBar;
