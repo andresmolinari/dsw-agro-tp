@@ -101,62 +101,81 @@ const createUsuario = async (req: Request, res: Response): Promise<void> => {
 // Login
 export const loginUser = async (req: Request, res: Response) => {
   const { name, password } = req.body;
+  const secret = process.env.SECRET_KEY;
 
-  // Validamos si el usuario existe en la base de datos
-
-  const user: any = await usuarioRepository.getUsuarioByName(name);
-
-  if (!user) {
-    return res.status(400).json({
-      msg: `No existe un usario con el nombre ${name} en la base de datos`,
+  // 1. Validación de Seguridad Crítica
+  if (!secret) {
+    console.error("FATAL ERROR: SECRET_KEY no está definida.");
+    // No le damos detalles al cliente, solo al log del servidor.
+    return res.status(500).json({
+      msg: "Error interno del servidor.",
     });
   }
 
-  // Validamos password
-  console.log({ plain: password, hashed: user.usuarioContraseña });
-  const passwordValid = await bcrypt.compare(password, user.usuarioContraseña);
+  try {
+    // 2. Validamos si el usuario existe en la base de datos
+    const user: any = await usuarioRepository.getUsuarioByName(name);
 
-  if (!passwordValid) {
-    return res.status(400).json({
-      msg: `Password incorrecta`,
-    });
-  }
+    // 3. Mensaje de error genérico y seguro
+    // Comparamos el hash incluso si el usuario no existe para evitar "timing attacks"
+    // (aunque bcrypt.compare es lento de por sí).
+    // Si el usuario no existe, creamos un hash falso para comparar.
+    const hashFalso = "$2b$10$fakedummypasswordforsecu.aB.CDEfGHijklm";
+    const userPassword = user ? user.usuarioContraseña : hashFalso;
 
-  // Generamos token
-  const token = jwt.sign(
-    {
-      usuarioId: user.usuarioId,
-      usuarioNombre: name,
-      rolId: user.rolId,
-    },
-    process.env.SECRET_KEY || "moli123",
-    {
-      expiresIn: 1800,
+    const passwordValid = await bcrypt.compare(password, userPassword);
+
+    if (!user || !passwordValid) {
+      return res.status(400).json({
+        msg: `Usuario o contraseña incorrectos`, // Mensaje unificado
+      });
     }
-  );
-  console.log(user.usuarioId);
-  res.json(token);
+
+    // 4. Generamos token
+    const token = jwt.sign(
+      {
+        usuarioId: user.usuarioId,
+        usuarioNombre: name,
+        rolId: user.rolId,
+      },
+      secret, // Usar la variable segura
+      {
+        expiresIn: 1800, // 30 minutos
+      }
+    );
+    
+    console.log(user.usuarioId);
+    res.json(token);
+
+  } catch (error) {
+    // 5. Captura de errores generales (DB, bcrypt, etc.)
+    console.error("Error en loginUser:", error);
+    res.status(500).json({ msg: "Error interno del servidor." });
+  }
 };
 
 // modificar usuario
 const updateUsuario = async (req: Request, res: Response): Promise<void> => {
   const { usuarioId } = req.params;
+  // Obtenemos solo los campos que PUEDEN ser actualizados
   const { usuarioEmail, usuarioContraseña } = req.body;
 
-  const hashedPassword = await bcrypt.hash(usuarioContraseña, 10);
   try {
-    // Obtenemos el usuario actual por su ID
+    // 1. Obtenemos el usuario actual por su ID
     const usuarioActual = await usuarioRepository.getUsuario(
       parseInt(usuarioId)
     );
 
     if (!usuarioActual) {
-      res.status(404).json({ message: "usuario no encontrado" });
+      res.status(404).json({ message: "Usuario no encontrado" });
       return;
     }
 
-    // Si el nombre ha cambiado, validamos que no exista otro usuario con el mismo nombre
-    if (usuarioActual && usuarioEmail !== usuarioActual.usuarioEmail) {
+    // 2. Creamos un objeto para los datos a actualizar
+    const updateData: Partial<Usuario> = {};
+
+    // 3. Validar y actualizar Email (si se proporcionó y es diferente)
+    if (usuarioEmail && usuarioEmail !== usuarioActual.usuarioEmail) {
       const existeEmail = await usuarioRepository.getUsuarioByEmail(
         usuarioEmail
       );
@@ -165,19 +184,31 @@ const updateUsuario = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({ message: "Ya existe un usuario con ese email" });
         return;
       }
+      updateData.usuarioEmail = usuarioEmail; // Añadimos al objeto de actualización
     }
 
-    // Realizamos la actualización solo con los campos que se enviaron
+    // 4. Validar y actualizar Contraseña (solo si se proporcionó)
+    if (usuarioContraseña) {
+      // Solo hasheamos si se provee una nueva contraseña
+      const hashedPassword = await bcrypt.hash(usuarioContraseña, 10);
+      updateData.usuarioContraseña = hashedPassword; // Añadimos al objeto
+    }
+
+    // 5. Verificar si hay algo que actualizar
+    if (Object.keys(updateData).length === 0) {
+      res.status(400).json({ message: "No se proporcionaron datos para actualizar" });
+      return;
+    }
+
+    // 6. Realizamos la actualización solo con los campos que cambiaron
     const updatedUsuario = await usuarioRepository.updateUsuario(
       parseInt(usuarioId),
-      {
-        usuarioEmail: usuarioEmail || usuarioActual.usuarioEmail, // Si no se envía un nuevo nombre, mantenemos el nombre actual
-        usuarioContraseña: hashedPassword || usuarioActual.usuarioContraseña,
-      }
+      updateData // Pasamos el objeto solo con los campos nuevos
     );
 
     // Retornar la respuesta exitosa
     res.status(200).json(updatedUsuario);
+
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
     res.status(500).json({ message: "Error al actualizar usuario" });

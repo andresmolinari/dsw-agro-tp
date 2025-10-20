@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Container,
   Paper,
@@ -7,13 +7,14 @@ import {
   TextField,
   Button,
   styled,
-} from '@mui/material';
+} from "@mui/material";
 
-import NotificationService from '../utils/NotificationService';
-import UserService from '../services/UserService';
-import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../types/AppRoutes';
-import { useAuth } from '../context/AuthContext';
+import NotificationService from "../utils/NotificationService";
+import UserService from "../services/UserService";
+import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../types/AppRoutes";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 interface LoginType {
   name: string;
@@ -24,8 +25,8 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState<LoginType>({
-    name: '',
-    password: '',
+    name: "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,60 +42,80 @@ const Login = () => {
         loginData.password
       );
       const data: string = response.data;
-      console.log(data);
-      if (response.status === 200) {
-        if (data !== null && data !== undefined && data !== '') {
-          login();
-          localStorage.setItem('token', data);
-          NotificationService.info('Inicio de sesión exitoso');
-          navigate(AppRoutes.HOME);
-        } else {
-          NotificationService.error('Token no valido');
-        }
+
+      if (response.status === 200 && data) {
+        login();
+        localStorage.setItem("token", data);
+        console.log("Inicio de sesión exitoso");
+        navigate(AppRoutes.HOME);
       } else {
-        NotificationService.error('Error en el inicio de sesión');
+        // Este caso es raro si el status es 200, pero es una buena guarda.
+        NotificationService.error("Respuesta inesperada del servidor.");
       }
     } catch (error) {
-      NotificationService.error('Error en el inicio de sesión');
+      // --- AQUÍ ESTÁ LA MEJORA ---
+
+      // Verificamos si es un error de Axios
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // El servidor respondió con un código de error (4xx, 5xx)
+          // Usamos el mensaje que definimos en el backend (ej: "Usuario o contraseña incorrectos")
+          NotificationService.error(
+            error.response.data.msg || "Error al procesar la solicitud"
+          );
+        } else if (error.request) {
+          // La solicitud se hizo pero no hubo respuesta (ej: servidor caído, red)
+          NotificationService.error(
+            "No se pudo conectar con el servidor. Revise su conexión."
+          );
+        } else {
+          // Algo pasó al configurar la solicitud
+          NotificationService.error("Error al preparar la solicitud de login.");
+        }
+      } else {
+        // Es un error genérico de JavaScript (no de Axios)
+        console.error("Error no-axios en handleSubmit:", error);
+        NotificationService.error("Ocurrió un error inesperado.");
+      }
     }
   };
 
   return (
-    <Container maxWidth='sm'>
+    <Container maxWidth="sm">
       <StyledBox>
-        <Paper style={{ padding: '1.2em', borderRadius: '0.5em' }}>
-          <Typography variant='h4' gutterBottom>
+        <Paper style={{ padding: "1.2em", borderRadius: "0.5em" }}>
+          <Typography variant="h4" gutterBottom>
             Iniciar Sesión
           </Typography>
-          <Box component='form' onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit}>
             <TextField
               autoFocus
               fullWidth
-              margin='normal'
-              label='Nombre de Usuario'
-              variant='outlined'
+              margin="normal"
+              label="Nombre de Usuario"
+              variant="outlined"
               required
-              name='name'
+              name="name"
               value={loginData.name}
               onChange={handleChange}
             />
             <TextField
               fullWidth
-              margin='normal'
-              label='Contraseña'
-              type='password'
-              variant='outlined'
+              margin="normal"
+              label="Contraseña"
+              type="password"
+              variant="outlined"
               required
-              name='password'
+              name="password"
               value={loginData.password}
               onChange={handleChange}
             />
             <Button
               fullWidth
-              type='submit'
-              variant='contained'
-              color='primary'
-              sx={{ marginTop: '1rem' }}
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ marginTop: "1rem" }}
             >
               Iniciar Sesión
             </Button>
@@ -108,9 +129,9 @@ const Login = () => {
 export default Login;
 
 const StyledBox = styled(Box)(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '100vh',
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  minHeight: "100vh",
 }));
