@@ -11,7 +11,6 @@ import {
   styled,
   Toolbar,
   Typography,
-
 } from "@mui/material";
 import { Menu as MenuIcon, AccountCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -63,24 +62,33 @@ export const NavBar: React.FC<NavBarProps> = ({ onMenuClick }) => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
         <Toolbar>
-          <Container>
+          {/* Cambio clave: Usa disableGutters en Container para eliminar el padding por defecto
+            y ajusta el padding del Box interno si aún necesitas más espacio a la izquierda.
+            Si no necesitas el ancho fijo del Container, podrías incluso quitarlo y usar directamente
+            el Box con estilos de flexbox en el Toolbar.
+          */}
+          <Container maxWidth="xl" disableGutters sx={{ paddingLeft: { xs: 0, md: 0 } }}> {/* Puedes ajustar el paddingLeft aquí */}
             <Box
               display="flex"
               justifyContent="space-between"
               alignItems="center"
               width="100%"
+              sx={{ 
+                paddingLeft: { xs: '16px', sm: '24px', md: '32px' }, // Ejemplo: añade padding a la izquierda para el contenido
+                paddingRight: { xs: '16px', sm: '24px', md: '32px' } // Mantén un padding derecho para balance
+              }}
             >
               <Box display="flex" alignItems="center">
-                {onMenuClick && (
-                <IconButton
-                  color="inherit"
-                  aria-label="open drawer"
-                  edge="start"
-                  onClick={onMenuClick}
-                  sx={{ mr: 2 }}
-                >
-                  <MenuIcon />
-                </IconButton>
+                {isAuthenticated && onMenuClick && (
+                  <IconButton
+                    color="inherit"
+                    aria-label="open drawer"
+                    edge="start"
+                    onClick={onMenuClick}
+                    sx={{ mr: 2 }}
+                  >
+                    <MenuIcon />
+                  </IconButton>
                 )}
                 <Typography
                   variant="h6"
