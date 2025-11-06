@@ -45,15 +45,6 @@ const NuevoCampo: React.FC<NuevoCampoProps> = ({ open, onClose, onCampoCreado , 
         campoUbicacion: formValues.ubicacion,
       });
 
-      
-      if (response.status === 400 && (response.data as any).message) {
-        const errorMessage = (response.data as any).message;
-        setError(errorMessage);
-        NotificationService.error(errorMessage);
-        return;
-      }
-  
-
       if (response.status !== 201) {
         setError('Error al crear campo');
         NotificationService.error('Error al crear el campo');
@@ -68,8 +59,14 @@ const NuevoCampo: React.FC<NuevoCampoProps> = ({ open, onClose, onCampoCreado , 
       });
       onCampoCreado();
       onClose();
-    } catch (error) {
-      console.error('Error al conectar con el servidor:', error);
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        const msg = error.response.data.message;
+        setError(msg);
+        NotificationService.error(msg);
+        return;
+      }
+
       setError('Error al conectar con el servidor');
       NotificationService.error('Error al conectar con el servidor');
     }

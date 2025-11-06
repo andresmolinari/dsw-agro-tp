@@ -37,16 +37,18 @@ const createCampo = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ message: "El nombre es requerido" });
       return;
     }
+    
+    const nombreNormalizado = campoNombre.trim().toLowerCase();
+
+    const existeNombre = await campoRepository.getCampoByName(nombreNormalizado, clienteId);
   
-    const existeNombre = await campoRepository.getCampoByName(campoNombre, clienteId);
-  
-    if (existeNombre && existeNombre.campoNombre === campoNombre) {
+    if (existeNombre) {
       res.status(400).json({ message: "Ya existe un campo con ese nombre" });
       return;
     }
 
     const newCampo = await campoRepository.createCampo(
-      {clienteId, campoNombre, campoUbicacion}
+      {clienteId, campoNombre: nombreNormalizado, campoUbicacion}
     );
     res.status(201).json(newCampo);
   } catch (error) {

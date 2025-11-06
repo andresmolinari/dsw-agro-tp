@@ -61,8 +61,8 @@ class Server {
     try {
       defineAssociations();
 
-      await sequelize.sync();
-      //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
+      //await sequelize.sync();
+      await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
       //await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
       // console.log('Tablas sincronizadas');
     } catch (error) {

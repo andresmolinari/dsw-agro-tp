@@ -56,16 +56,22 @@ const getCampoByName = async (
   campoNombre: string,
   clienteId: number
 ): Promise<Campo | null> => {
+  if (!clienteId) {
+    throw new Error("clienteId es requerido");
+  }
+
   try {
     const campo = await Campo.findOne({
-      where: { campoNombre, clienteId: clienteId },
+      where: { campoNombre, clienteId },
     });
+
     return campo;
   } catch (error) {
     console.error("Error en la consulta a la base de datos:", error);
     throw error;
   }
 };
+
 
 // Crear un campo
 

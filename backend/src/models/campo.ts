@@ -34,10 +34,12 @@ export class Campo extends Model<CampoAttributes> implements CampoAttributes {
           },
           onUpdate: 'CASCADE',
           onDelete: 'CASCADE',
+          unique: 'unique_nombre_por_cliente'
         },
         campoNombre: {
           type: DataTypes.STRING,
           allowNull: false,
+          unique: 'unique_nombre_por_cliente'
         },
         campoUbicacion: {
           type: DataTypes.STRING,
@@ -47,6 +49,13 @@ export class Campo extends Model<CampoAttributes> implements CampoAttributes {
         sequelize,
         modelName: 'Campo',
         tableName: 'Campos',
+        indexes: [
+        {
+          unique: true,
+          name: 'unique_nombre_por_cliente',
+          fields: ['clienteId', 'campoNombre'],
+        },
+      ],
       }
     );
   }
