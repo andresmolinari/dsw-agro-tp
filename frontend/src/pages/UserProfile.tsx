@@ -51,25 +51,25 @@ const UserProfile: React.FC = () => {
     loadUsuario();
   }, []);
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
+  // const handleEditClick = () => {
+  //   setIsEditing(true);
+  // };
 
-  const handleSave = async () => {
-    if (usuario) {
-      try {
-        const updatedUsuario = await updateUsuario(usuario.usuarioId, {
-          usuarioEmail: updatedEmail,
-          usuarioContraseña: updatedPassword,
-        });
-        setUsuario(updatedUsuario);
-        setIsEditing(false);
-      } catch (err) {
-        console.error('Error al actualizar el usuario:', err);
-        setError('No se pudo actualizar el perfil.');
-      }
-    }
-  };
+  // const handleSave = async () => {
+  //   if (usuario) {
+  //     try {
+  //       const updatedUsuario = await updateUsuario(usuario.usuarioId, {
+  //         usuarioEmail: updatedEmail,
+  //         usuarioContraseña: updatedPassword,
+  //       });
+  //       setUsuario(updatedUsuario);
+  //       setIsEditing(false);
+  //     } catch (err) {
+  //       console.error('Error al actualizar el usuario:', err);
+  //       setError('No se pudo actualizar el perfil.');
+  //     }
+  //   }
+  // };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{error}</Typography>;
@@ -78,13 +78,13 @@ const UserProfile: React.FC = () => {
     <Container>
       <Paper elevation={3} sx={{ padding: 3, marginTop: 4, position: 'relative' }}>
         <Typography variant="h4" gutterBottom>Perfil de Usuario</Typography>
-        <IconButton 
+        {/* <IconButton 
           onClick={handleEditClick} 
           sx={{ position: 'absolute', top: 16, right: 16 }}
           aria-label="edit"
         >
           <EditIcon />
-        </IconButton>
+        </IconButton> */}
         {usuario && (
           <Box>
             <Typography variant="h6">Nombre:</Typography>
@@ -101,7 +101,7 @@ const UserProfile: React.FC = () => {
             <Typography>{usuario.usuarioEmail}</Typography>
           )}
 
-            {isEditing && (
+            {/* {isEditing && (
               <>
                 <Typography variant="h6" sx={{ marginTop: 2 }}>Contraseña:</Typography>
                 <TextField
@@ -120,7 +120,7 @@ const UserProfile: React.FC = () => {
                   Guardar Cambios
                 </Button>
               </>
-            )}
+            )} */}
           </Box>
         )}
       </Paper>
