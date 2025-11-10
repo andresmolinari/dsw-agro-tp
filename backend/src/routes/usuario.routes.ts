@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { controller } from "../controllers/usuario.controller.js";
-import validateToken from "../services/validate-token.js";
-import { isAdmin } from "../services/validate-token.js";
+import { controller } from "../controllers/usuario.controller";
+import validateToken from "../services/validate-token";
+import { isAdmin } from "../services/validate-token";
 
 const usuarioRouter = Router();
 

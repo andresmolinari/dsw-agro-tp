@@ -9,19 +9,21 @@ import loteRouter from '../routes/lote.routes';
 import ordenTrabajoRouter from '../routes/ordenTrabajo.routes';
 
 class Server {
-  private app: Application;
+  public app: Application;
   private port: string | undefined;
 
   constructor() {
     this.app = express();
     this.port = process.env.PORT;
-    this.listen();
+    //this.listen();
     this.middlewares();
     this.routes();
-    this.dbConnect();
+    //this.dbConnect();
+    
   }
 
-  listen() {
+  async listen() {
+    await this.dbConnect();
     this.app.listen(this.port, () => {
       console.log('Aplicación corriendo en el puerto ' + this.port);
     });
@@ -29,11 +31,16 @@ class Server {
 
   // Rutas
   routes() {
+    this.app.get("/ping", (req, res) => {
+      res.json({ message: "pong" });
+    });
+
     this.app.use('/api/clientes', clienteRouter);
     this.app.use('/api/campos', campoRouter);
     this.app.use('/api/usuarios', usuarioRouter);
     this.app.use('/api/lotes', loteRouter);
     this.app.use('/api/ordenTrabajo', ordenTrabajoRouter);
+    this.app.use('/api/login', usuarioRouter);
   }
 
   // Middlewares
@@ -60,11 +67,12 @@ class Server {
   async dbConnect() {
     try {
       defineAssociations();
-
+      await sequelize.authenticate();
       //await sequelize.sync();
-      await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
+      //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
       //await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
-      // console.log('Tablas sincronizadas');
+      console.log('Tablas sincronizadas');
+
     } catch (error) {
       // Capturar cualquier error durante la sincronización o conexión
       console.error('Error al conectar o sincronizar la base de datos:', error);

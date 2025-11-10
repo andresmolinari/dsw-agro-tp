@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { controller } from "../controllers/campo.controller.js";
-import validateToken from "../services/validate-token.js";
+import { controller } from "../controllers/campo.controller";
+import validateToken from "../services/validate-token";
 
 const campoRouter = Router();
 
