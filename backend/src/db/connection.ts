@@ -4,12 +4,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const sequelize = new Sequelize(
-  "dsw_agro_db",
-  process.env.DB_USER || "defaultUser",
-  process.env.DB_PASSWORD || "defaultPassword",
+  process.env.DB_NAME as string,
+  process.env.DB_USER as string,
+  process.env.DB_PASSWORD as string,
   {
-    host: "localhost",
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT) || 3306,
     dialect: "mysql",
+    logging: false
   }
 );
 
