@@ -1,8 +1,17 @@
 // NuevoCliente.tsx
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { TextField, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Alert } from '@mui/material';
-import NotificationService from '../../utils/NotificationService';
-import ClienteService from '../../services/ClienteService';
+import React, { useState, ChangeEvent, FormEvent } from "react";
+import {
+  TextField,
+  Button,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Alert,
+} from "@mui/material";
+import NotificationService from "../../utils/NotificationService";
+import ClienteService from "../../services/ClienteService";
 
 interface NuevoClienteProps {
   open: boolean;
@@ -19,15 +28,20 @@ interface FormValues {
   provincia: string;
 }
 
-const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCreado }) => {
+const NuevoCliente: React.FC<NuevoClienteProps> = ({
+  open,
+  onClose,
+  onClienteCreado,
+}) => {
   const [formValues, setFormValues] = useState<FormValues>({
-    nombre: '',
-    email: '',
-    telefono: '',
-    direccion: '',
-    localidad: '',
-    provincia: '',
+    nombre: "",
+    email: "",
+    telefono: "",
+    direccion: "",
+    localidad: "",
+    provincia: "",
   });
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -44,8 +58,13 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
     setError(null);
     setSuccess(null);
 
+    if (formValues.nombre.trim() === "") {
+      setError("El nombre es obligatorio");
+      NotificationService.error("El nombre es obligatorio");
+      return;
+    }
+
     try {
-      // Llamada a la API mediante ClienteService
       const response = await ClienteService.createCliente({
         clienteNombre: formValues.nombre,
         clienteEmail: formValues.email,
@@ -55,71 +74,99 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({ open, onClose, onClienteCre
         clienteProvincia: formValues.provincia,
       });
 
-      
-      if (response.status === 400 && (response.data as any).message) {
-        const errorMessage = (response.data as any).message;
-        setError(errorMessage);
-        NotificationService.error(errorMessage);
-        return;
-      }
-  
+      setSuccess("Cliente creado con éxito");
+      NotificationService.info("Cliente creado con éxito");
 
-      if (response.status !== 201) {
-        setError('Error al crear cliente');
-        NotificationService.error('Error al crear el cliente');
-        return;
-      }
-
-      setSuccess('Cliente creado con éxito');
-      NotificationService.info('Cliente creado con éxito');
       setFormValues({
-        nombre: '',
-        email: '',
-        telefono: '',
-        direccion: '',
-        localidad: '',
-        provincia: '',
+        nombre: "",
+        email: "",
+        telefono: "",
+        direccion: "",
+        localidad: "",
+        provincia: "",
       });
+
       onClienteCreado();
       onClose();
-    } catch (error) {
-      console.error('Error al conectar con el servidor:', error);
-      setError('Error al conectar con el servidor');
-      NotificationService.error('Error al conectar con el servidor');
+    } catch (error: any) {
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 400 && data.message) {
+          setError(data.message);
+          NotificationService.error(data.message);
+        } else {
+          setError("Error al crear cliente");
+          NotificationService.error("Error al crear cliente");
+        }
+      } else {
+        setError("No se pudo conectar con el servidor");
+        NotificationService.error("No se pudo conectar con el servidor");
+      }
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Crear Nuevo Cliente</DialogTitle>
       <DialogContent>
-        {error && <Alert severity='error'>{error}</Alert>}
-        {success && <Alert severity='success'>{success}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
+        {success && <Alert severity="success">{success}</Alert>}
         <form onSubmit={handleSubmit}>
           <Stack spacing={2} sx={{ mt: 2 }}>
             <TextField
-              label='Nombre'
-              name='nombre'
+              label="Nombre"
+              name="nombre"
               fullWidth
               required
               value={formValues.nombre}
               onChange={handleChange}
-              error={Boolean(error && formValues.nombre === '')}
-              helperText={formValues.nombre === '' && error ? error : ''}
+              error={Boolean(error && formValues.nombre === "")}
+              helperText={formValues.nombre === "" && error ? error : ""}
             />
-            <TextField label='Email' name='email' fullWidth required type='email' value={formValues.email} onChange={handleChange} />
-            <TextField label='Teléfono' name='telefono' fullWidth required value={formValues.telefono} onChange={handleChange} />
-            <TextField label='Dirección' name='direccion' fullWidth required value={formValues.direccion} onChange={handleChange} />
-            <TextField label='Localidad' name='localidad' fullWidth required value={formValues.localidad} onChange={handleChange} />
-            <TextField label='Provincia' name='provincia' fullWidth required value={formValues.provincia} onChange={handleChange} />
+            <TextField
+              label="Email"
+              name="email"
+              fullWidth
+              type="email"
+              value={formValues.email}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Teléfono"
+              name="telefono"
+              fullWidth
+              value={formValues.telefono}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Dirección"
+              name="direccion"
+              fullWidth
+              value={formValues.direccion}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Localidad"
+              name="localidad"
+              fullWidth
+              value={formValues.localidad}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Provincia"
+              name="provincia"
+              fullWidth
+              value={formValues.provincia}
+              onChange={handleChange}
+            />
           </Stack>
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color='secondary'>
+        <Button onClick={onClose} color="secondary">
           Cancelar
         </Button>
-        <Button onClick={handleSubmit} variant='contained' color='primary'>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
           Guardar Cliente
         </Button>
       </DialogActions>
