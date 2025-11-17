@@ -16,20 +16,20 @@ class UserService {
 
   login(name: string, password: string): Promise<AxiosResponse<string>> {
     console.log("username:", name);
-    return axios.post<string>(`http://localhost:3000${this.path}/login`, {
+    return axios.post<string>(`${import.meta.env.VITE_API_URL}${this.path}/login`, {
       name,
       password,
     });
   }
 
   fetchAllUsuarios(): Promise<AxiosResponse<Usuario[]>> {
-    return axios.get<Usuario[]>(`http://localhost:3000${this.path}`, {
+    return axios.get<Usuario[]>(`${import.meta.env.VITE_API_URL}${this.path}`, {
       headers: this.getAuthHeaders(),
     });
   }
 
   async deleteUsuario(usuarioId: number): Promise<void> {
-    await axios.delete<void>(`http://localhost:3000${this.path}/${usuarioId}`, {
+    await axios.delete<void>(`${import.meta.env.VITE_API_URL}${this.path}/${usuarioId}`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -37,7 +37,7 @@ class UserService {
 
 export const fetchUsuario = async (usuarioId: number): Promise<Usuario> => {
   const response = await axios.get<Usuario>(
-    `http://localhost:3000/api/usuarios/${usuarioId}`
+    `${import.meta.env.VITE_API_URL}/usuarios/${usuarioId}`
   );
   return response.data;
 };
@@ -56,10 +56,10 @@ export const updateUsuario = async (
 
   // Realizar la solicitud PUT con el token en los headers
   const response = await axios.put<Usuario>(
-    `http://localhost:3000/api/usuarios/${usuarioId}`,
+    `${import.meta.env.VITE_API_URL}/usuarios/${usuarioId}`,
     data,
     { headers }
   );
   return response.data;
 };
-export default new UserService("/api/usuarios");
+export default new UserService("/usuarios");

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const HttpClient = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 // Interceptor para agregar el token en el encabezado Authorization
