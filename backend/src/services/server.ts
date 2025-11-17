@@ -66,9 +66,9 @@ class Server {
   async dbConnect() {
     try {
       defineAssociations();
-      await sequelize.authenticate();
+      //await sequelize.authenticate();
       //await sequelize.sync();
-      //await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
+      await sequelize.sync({ force: true }); //borra las creadas y las vuelve a crear
       //await sequelize.sync({ alter: true }); // chequea si hay cambios y los hace
       console.log('Tablas sincronizadas');
 
