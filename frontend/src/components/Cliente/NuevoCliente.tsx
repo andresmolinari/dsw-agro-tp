@@ -65,7 +65,7 @@ const NuevoCliente: React.FC<NuevoClienteProps> = ({
     }
 
     try {
-      const response = await ClienteService.createCliente({
+      await ClienteService.createCliente({
         clienteNombre: formValues.nombre,
         clienteEmail: formValues.email,
         clienteTelefono: formValues.telefono,

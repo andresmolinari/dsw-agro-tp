@@ -3,9 +3,7 @@ import backgroundImage from "../assets/images/homeImage.jpg";
 import Footer from "../components/Footer";
 
 
-interface Props {}
-
-const Home = (props: Props) => {
+const Home = () => {
   return (
     <div style={{ 
       display: "flex", 

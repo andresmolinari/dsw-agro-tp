@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, CircularProgress, Paper, TextField, Button, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Container, Typography, Box, CircularProgress, Paper} from '@mui/material';
 import {jwtDecode} from 'jwt-decode';
-import { fetchUsuario, updateUsuario } from '../services/UserService';
+import { fetchUsuario } from '../services/UserService';
 import { Usuario } from '../types/Usuario';
 
 const UserProfile: React.FC = () => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [updatedEmail, setUpdatedEmail] = useState<string>('');
-  const [updatedPassword, setUpdatedPassword] = useState<string>('');
+  
+ 
 
   const decodeUserIdFromToken = (): number | null => {
     try {
@@ -37,7 +35,7 @@ const UserProfile: React.FC = () => {
         if (userId) {
           const fetchedUsuario = await fetchUsuario(userId);
           setUsuario(fetchedUsuario);
-          setUpdatedEmail(fetchedUsuario.usuarioEmail);
+         // setUpdatedEmail(fetchedUsuario.usuarioEmail);
         } else {
           setError('Usuario no autenticado.');
         }
@@ -90,16 +88,8 @@ const UserProfile: React.FC = () => {
             <Typography variant="h6">Nombre:</Typography>
             <Typography>{usuario.usuarioNombre}</Typography>
             <Typography variant="h6" sx={{ marginTop: 2 }}>Correo Electrónico:</Typography>
-            {isEditing ? (
-              <TextField
-                value={updatedEmail}
-                onChange={(e) => setUpdatedEmail(e.target.value)}
-                fullWidth
-                margin="dense"
-              />
-            ) : (
             <Typography>{usuario.usuarioEmail}</Typography>
-          )}
+          
 
             {/* {isEditing && (
               <>
