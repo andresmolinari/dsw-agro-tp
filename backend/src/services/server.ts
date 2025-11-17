@@ -40,7 +40,6 @@ class Server {
     this.app.use('/api/usuarios', usuarioRouter);
     this.app.use('/api/lotes', loteRouter);
     this.app.use('/api/ordenTrabajo', ordenTrabajoRouter);
-    this.app.use('/api/login', usuarioRouter);
   }
 
   // Middlewares
