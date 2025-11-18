@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { OrdenTrabajo } from '../types/OrdenTrabajo';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { OrdenTrabajo } from "../types/OrdenTrabajo";
 
 export const useOrdenesTrabajo = () => {
   const [ordenes, setOrdenes] = useState<OrdenTrabajo[]>([]);
@@ -10,16 +10,19 @@ export const useOrdenesTrabajo = () => {
   useEffect(() => {
     const fetchOrdenes = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/ordenTrabajo', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/ordenTrabajo`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         setOrdenes(response.data);
       } catch (err) {
         console.error(err);
-        setError('Error al obtener las órdenes de trabajo.');
+        setError("Error al obtener las órdenes de trabajo.");
       } finally {
         setLoading(false);
       }
