@@ -1,11 +1,17 @@
 # tp-dsw-agro
 TP Desarrollo de Software - Agro
+- Molinari Andrés
 
 Aplicación de gestión de trabajos del sector agropecuario para la materia Desarrollo de Software de la UTN Frro.
 
-Integrantes:
-- Moreal Franco
-- Molinari Andrés
+Toda la documentación completa se encuentra aquí:
+
+📄 **./docs/README.md**
+
+
+
+- [Link al repositorio](https://github.com/andresmolinari/dsw-agro-tp)
+
 
 
 ## Modelo de Dominio
