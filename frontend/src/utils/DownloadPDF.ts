@@ -3,7 +3,7 @@ export const downloadOrdenTrabajoPDF = async (nroOrdenTrabajo: number) => {
   if (!token) throw new Error("No hay token disponible");
 
   const response = await fetch(
-    `http://localhost:3000/api/ordenTrabajo/pdf/${nroOrdenTrabajo}`,
+    `${import.meta.env.VITE_API_URL}/ordenTrabajo/pdf/${nroOrdenTrabajo}`,
     {
       method: "GET",
       headers: {
