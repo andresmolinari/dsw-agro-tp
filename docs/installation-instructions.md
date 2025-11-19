@@ -46,15 +46,15 @@ SECRET_KEY=An&PVttImkE&
 
 ## 4.1 Ejecución backend
 
-- Desarrollo: npm run dev
+- Desarrollo: - npm run dev
 
-- Producción: npm run build
-              npm start
+- Producción: - npm run build
+              - npm start
 
 ## 4.2 Ejecución frontend
 
-- Desarrollo: npm run dev
+- Desarrollo: - npm run dev
 
-- Producción: npm run build
-              npm run preview
+- Producción: - npm run build
+              - npm run preview
             
