@@ -32,15 +32,15 @@ Entrar al directorio del backend y ejecutar:
 
 ## 3. Configuración
 
-Crear un archivo .env en /backend con las variables necesarias:
+Crear un archivo .env en /backend con las variables necesarias:<br>
 
-DB_NAME=dsw_agro_db
-DB_USER=root
-DB_PASSWORD=tucontraseña
-DB_HOST=localhost
-DB_PORT=3306
-PORT=3000
-SECRET_KEY=An&PVttImkE&
+DB_NAME=dsw_agro_db<br>
+DB_USER=root<br>
+DB_PASSWORD=tucontraseña<br>
+DB_HOST=localhost<br>
+DB_PORT=3306<br>
+PORT=3000<br>
+SECRET_KEY=An&PVttImkE&<br>
 
 --- 
 
@@ -48,13 +48,13 @@ SECRET_KEY=An&PVttImkE&
 
 - Desarrollo: - npm run dev
 
-- Producción: - npm run build
+- Producción: - npm run build<br>
               - npm start
 
 ## 4.2 Ejecución frontend
 
 - Desarrollo: - npm run dev
 
-- Producción: - npm run build
+- Producción: - npm run build<br>
               - npm run preview
             
